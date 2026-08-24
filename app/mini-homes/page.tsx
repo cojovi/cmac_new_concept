@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   Box,
@@ -18,8 +17,19 @@ import {
   Shield,
   Truck,
 } from 'lucide-react'
-import { SiteHeader } from '../components/SiteHeader'
-import { IconBox, Logo, RedButton } from '../components/ui'
+import { SiteHeader } from '@/components/SiteHeader'
+import { IconBox, Logo, RedButton } from '@/components/ui'
+
+import type { Metadata } from 'next'
+
+export const dynamic = 'force-static'
+
+export const metadata: Metadata = {
+  title: 'CMAC Mini-Homes | Texas-Built Modular Container Homes',
+  description:
+    'CMAC Mini-Homes builds turnkey modular container homes in Texas — workforce housing, flexible layouts, and delivery-ready construction from a veteran-owned builder.',
+  alternates: { canonical: '/mini-homes' },
+}
 
 const trustBadges = [
   { title: 'TEXAS BUILT', detail: 'Built in the Lone Star State', Icon: MapPinned },
@@ -102,16 +112,10 @@ const galleryShots = [
   },
 ]
 
-export default function MiniHomesPage() {
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    document.title = 'CMAC Containers | Container-Built Living & Spaces'
-  }, [])
-
+export default function Page() {
   return (
     <main className="site-shell">
-      <SiteHeader variant="minihomes" menuOpen={menuOpen} onMenuToggle={() => setMenuOpen(!menuOpen)} />
+      <SiteHeader variant="minihomes" />
 
       <section className="hero hero-minihomes">
         <div className="minihomes-hero-bg" role="img" aria-label="CMAC container mini home at night with red accent lighting" />

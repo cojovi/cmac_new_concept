@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 export function Logo({
   small = false,
@@ -11,7 +11,8 @@ export function Logo({
   to?: string
 }) {
   return (
-    <Link aria-label={`CMAC ${brand} home`} className={small ? 'logo logo-small' : 'logo'} to={to}>
+    <Link aria-label={`CMAC ${brand} home`} className={small ? 'logo logo-small' : 'logo'} href={to}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- fixed-size mark sized entirely by CSS clamp() */}
       <img src="/cmac-logo-red.png" alt="CMAC" />
       <strong data-brand={brand}>{brand}</strong>
     </Link>

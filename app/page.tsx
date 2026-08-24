@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   Award,
@@ -19,8 +18,19 @@ import {
   Star,
   Wrench,
 } from 'lucide-react'
-import { SiteHeader } from '../components/SiteHeader'
-import { IconBox, Logo, RedButton } from '../components/ui'
+import { SiteHeader } from '@/components/SiteHeader'
+import { IconBox, Logo, RedButton } from '@/components/ui'
+
+import type { Metadata } from 'next'
+
+export const dynamic = 'force-static'
+
+export const metadata: Metadata = {
+  title: 'CMAC Roofing | Veteran-Owned Roofing, Gutters, Doors & Restoration',
+  description:
+    'CMAC Roofing is a veteran-owned roofing, gutter, garage door, and restoration contractor serving Texas, Oklahoma, Arkansas, Tennessee, and Georgia. GAF Master Elite® certified.',
+  alternates: { canonical: '/' },
+}
 
 const trustBadges = [
   { title: 'VETERAN OWNED', detail: 'U.S. Veteran Operated', Icon: Award },
@@ -101,16 +111,10 @@ const reviews = [
   },
 ]
 
-export default function RoofingPage() {
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    document.title = 'CMAC Roofing | Veteran-Owned Exterior & Restoration'
-  }, [])
-
+export default function Page() {
   return (
     <main className="site-shell">
-      <SiteHeader variant="roofing" menuOpen={menuOpen} onMenuToggle={() => setMenuOpen(!menuOpen)} />
+      <SiteHeader variant="roofing" />
 
       <section className="hero">
         <div className="blueprint-grid" />

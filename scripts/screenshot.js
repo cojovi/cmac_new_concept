@@ -4,31 +4,34 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-async function main() {
-  const url = process.argv[2] || 'http://localhost:5173';
-  const outputPath = path.resolve(__dirname, '../comparison/current.png');
+const BASE = process.env.BASE_URL || 'http://localhost:3000';
 
-  console.log(`Launching browser to capture: ${url}`);
-  
+// pathname -> output basename
+const TARGETS = process.argv[2]
+  ? [[process.argv[2], process.argv[3] || 'current']]
+  : [['/', 'current']];
+
+async function main() {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({
-    viewport: { width: 974, height: 1000 }
-  });
+  const page = await browser.newPage({ viewport: { width: 974, height: 1000 } });
 
   try {
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 15000 });
-    // Additional wait for static resources and animations to settle
-    await page.waitForTimeout(2000);
+    for (const [pathname, name] of TARGETS) {
+      const url = pathname.startsWith('http') ? pathname : `${BASE}${pathname}`;
+      const outputPath = path.resolve(__dirname, `../comparison/${name}.png`);
+      console.log(`Capturing ${url}`);
 
-    console.log(`Taking full-page screenshot at 974px width...`);
-    await page.screenshot({
-      path: outputPath,
-      fullPage: true
-    });
-    
-    console.log(`Screenshot successfully saved to: ${outputPath}`);
+      // 'networkidle' hangs against Next's dev websocket; wait on fonts instead.
+      await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+      await page.evaluate(() => document.fonts.ready);
+      await page.waitForTimeout(1200);
+
+      await page.screenshot({ path: outputPath, fullPage: true });
+      console.log(`  -> ${outputPath}`);
+    }
   } catch (error) {
     console.error('Error taking screenshot:', error);
+    process.exitCode = 1;
   } finally {
     await browser.close();
   }
