@@ -38,7 +38,7 @@ then confirm one real lead delivery. Resend credentials remain intentionally def
   HTML nor Markdown is acceptable, and advertises page-level Markdown alternates with metadata frontmatter.
 - Production verification passes: lint, typecheck, production build, warning-free OpenAPI validation,
   **618 checks across 65 public routes**, all 261 legacy records, both MCP eras, and the official SDK
-  handshake. Final production deployment: `dpl_EgRcxeKUhFJTcHry9buCLbrPDGAU` at
+  handshake. Verified code deployment: `dpl_EgRcxeKUhFJTcHry9buCLbrPDGAU` at
   `https://cmac-new-concept.vercel.app`.
 - Remaining scan limitations are external or inapplicable. The temporary Vercel alias makes the scanner
   search for “Vercel” developer resources and Wikidata rather than CMAC; CMAC brand search depends on the
