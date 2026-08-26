@@ -32,14 +32,21 @@ export const metadata: Metadata = {
     'CMAC Roofing is a veteran-owned roofing, gutter, garage door, and restoration contractor serving Texas, Oklahoma, Arkansas, Tennessee, and Georgia. GAF Master Elite® certified.',
   applicationName: SITE_NAME,
   authors: [{ name: 'CMAC Roofing and Sheet Metal LLC', url: SITE_URL }],
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     siteName: SITE_NAME,
     locale: 'en_US',
     url: SITE_URL,
+    images: [
+      {
+        url: '/hero-house.webp',
+        width: 1600,
+        height: 1067,
+        alt: 'CMAC Roofing residential exterior',
+      },
+    ],
   },
-  twitter: { card: 'summary_large_image' },
+  twitter: { card: 'summary_large_image', images: ['/hero-house.webp'] },
   icons: {
     icon: [
       { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
@@ -60,7 +67,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${outfit.variable} ${pirulen.variable}`}>
-      <body>{children}</body>
+      <body>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
+        {children}
+      </body>
     </html>
   )
 }

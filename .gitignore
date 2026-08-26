@@ -27,3 +27,6 @@ dist-ssr
 .next/
 next-env.d.ts
 .vercel
+.verification/
+tmp/
+.env*

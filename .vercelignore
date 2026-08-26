@@ -1,0 +1,20 @@
+.verification/
+comparison/
+current_website/
+reference/
+
+# Source/reference artwork duplicated outside public/.
+Generated image 1.png
+cmac_revamp_5.png
+cta-bg.jpg
+hero-bg.jpg
+states-section.jpg
+svc-doors.jpg
+svc-gutters.jpg
+svc-restoration.jpg
+svc-roofing.jpg
+
+# Handoff notes are not build inputs.
+claude_console.md
+plan_from_claude.md
+DESIGN_SPEC.md

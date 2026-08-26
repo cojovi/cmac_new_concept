@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export function Logo({
@@ -12,8 +13,7 @@ export function Logo({
 }) {
   return (
     <Link aria-label={`CMAC ${brand} home`} className={small ? 'logo logo-small' : 'logo'} href={to}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- fixed-size mark sized entirely by CSS clamp() */}
-      <img src="/cmac-logo-red.png" alt="CMAC" />
+      <Image src="/cmac-logo-red.png" alt="CMAC" width={164} height={45} priority={!small} />
       <strong data-brand={brand}>{brand}</strong>
     </Link>
   )
@@ -28,10 +28,21 @@ export function RedButton({
   wide?: boolean
   href?: string
 }) {
-  return (
-    <a className={wide ? 'btn btn-red btn-wide' : 'btn btn-red'} href={href}>
+  const className = wide ? 'btn btn-red btn-wide' : 'btn btn-red'
+  const content = (
+    <>
       {children}
-      <ArrowRight size={13} strokeWidth={2.6} />
+      <ArrowRight size={13} strokeWidth={2.6} aria-hidden="true" />
+    </>
+  )
+
+  return href.startsWith('/') ? (
+    <Link className={className} href={href}>
+      {content}
+    </Link>
+  ) : (
+    <a className={className} href={href}>
+      {content}
     </a>
   )
 }

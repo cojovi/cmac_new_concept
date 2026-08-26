@@ -4,10 +4,14 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config([
-  { ignores: ['.next', 'node_modules', 'comparison', 'current_website', 'reference'] },
+  { ignores: ['.next', '.vercel', 'node_modules', 'comparison', 'current_website', 'reference'] },
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [js.configs.recommended, ...tseslint.configs.recommended, reactHooks.configs['recommended-latest']],
+    extends: [
+      js.configs.recommended,
+      ...tseslint.configs.recommended,
+      reactHooks.configs.flat['recommended-latest'],
+    ],
     languageOptions: {
       ecmaVersion: 2022,
       globals: { ...globals.browser, ...globals.node },

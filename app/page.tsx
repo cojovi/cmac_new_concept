@@ -1,10 +1,10 @@
+import type { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
 import {
   ArrowRight,
   Award,
   CalendarDays,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   CircleDot,
   ClipboardCheck,
   DoorClosed,
@@ -15,410 +15,305 @@ import {
   Phone,
   Search,
   Shield,
-  Star,
   Wrench,
 } from 'lucide-react'
+import { QuoteForm } from '@/components/QuoteForm'
+import { JsonLd } from '@/components/JsonLd'
+import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
-import { IconBox, Logo, RedButton } from '@/components/ui'
-
-import type { Metadata } from 'next'
+import { IconBox, RedButton } from '@/components/ui'
+import { credentials, org, press } from '@/content/org'
+import { aggregateRating, reviewsFor } from '@/content/reviews'
+import { docByPath } from '@/content/docs'
+import { graphFor } from '@/lib/jsonld'
 
 export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
-  title: 'CMAC Roofing | Veteran-Owned Roofing, Gutters, Doors & Restoration',
-  description:
-    'CMAC Roofing is a veteran-owned roofing, gutter, garage door, and restoration contractor serving Texas, Oklahoma, Arkansas, Tennessee, and Georgia. GAF Master Elite® certified.',
+  title: 'Veteran-Owned Roofing, Gutters, Doors & Restoration',
+  description: org.description,
   alternates: { canonical: '/' },
 }
 
 const trustBadges = [
-  { title: 'VETERAN OWNED', detail: 'U.S. Veteran Operated', Icon: Award },
-  { title: '5 STAR RATED', detail: '1,000+ Reviews', Icon: Star },
-  { title: 'INSURED & BONDED', detail: 'Fully Licensed', Icon: Shield },
-  { title: '24/7 RESPONSE', detail: 'Storm & Emergency', Icon: Home },
+  { title: 'VETERAN OWNED', detail: 'Veteran led and operated', Icon: Award },
+  { title: 'GAF MASTER ELITE', detail: 'Certified contractor', Icon: Shield },
+  { title: 'BBB A+ RATED', detail: 'Accredited business', Icon: Home },
+  { title: '24/7 WATER RESPONSE', detail: 'Emergency restoration', Icon: Headphones },
 ]
 
 const services = [
   {
     title: 'Roofing',
-    body: 'Shingle, metal, tile, and flat roof systems installed with precision.',
+    body: 'Residential, commercial, multi-family, metal, tile, and flat-roof expertise.',
     image: '/svc-roofing-clean.jpg',
-    link: 'Explore Roofing',
+    href: '/services/roofing',
     Icon: Home,
   },
   {
     title: 'Gutters',
-    body: 'Custom gutter systems designed to protect your foundation.',
+    body: 'Seamless gutters, guards, repairs, and drainage solutions for your property.',
     image: '/svc-gutters-clean.jpg',
-    link: 'Explore Gutters',
+    href: '/services/gutters',
     Icon: CircleDot,
   },
   {
-    title: 'Doors',
-    body: 'Front entry, patio, and storm doors that add security and style.',
+    title: 'Garage Doors',
+    body: 'Garage-door installation and repair for safer, better-looking exteriors.',
     image: '/svc-doors-clean.jpg',
-    link: 'Explore Doors',
+    href: '/services/doors',
     Icon: DoorClosed,
   },
   {
     title: 'Restoration',
-    body: 'Storm damage, insurance claims, and full-service restoration support.',
+    body: 'Storm, fire, and water restoration coordinated by one experienced team.',
     image: '/svc-restoration-clean.jpg',
-    link: 'Explore Restoration',
+    href: '/services/restoration',
     Icon: Wrench,
   },
 ]
 
 const processSteps = [
-  { n: '1', title: 'Schedule Inspection', detail: 'We make it easy to get started.', Icon: CalendarDays },
-  { n: '2', title: 'Inspect & Assess', detail: 'Advanced tools. Expert assessment.', Icon: Search },
-  { n: '3', title: 'Plan & Approve', detail: 'Transparent scope. Detailed proposal.', Icon: ClipboardCheck },
-  { n: '4', title: 'Build & Execute', detail: 'Quality crews. On-time delivery.', Icon: Hammer },
-  { n: '5', title: 'Final Inspection', detail: "We don't leave until it's perfect.", Icon: Shield },
+  { n: '1', title: 'Schedule', detail: 'Tell us what is happening at your property.', Icon: CalendarDays },
+  { n: '2', title: 'Inspect', detail: 'We document the roof and exterior carefully.', Icon: Search },
+  { n: '3', title: 'Plan', detail: 'Review a clear scope and written proposal.', Icon: ClipboardCheck },
+  { n: '4', title: 'Build', detail: 'The CMAC team completes the approved work.', Icon: Hammer },
+  { n: '5', title: 'Confirm', detail: 'A final walkthrough closes out the project.', Icon: Shield },
 ]
 
-const credentials = [
-  { logo: 'GAF', title: 'Master Elite®', note: 'Certified Contractor', className: 'gaf' },
-  { logo: 'CertainTeed', title: 'SELECT', note: 'ShingleMaster™', className: 'certainteed' },
-  { logo: 'IKO', title: 'ROOFPRO', note: 'Preferred Contractor', className: 'iko' },
-  { logo: 'Malarkey', title: 'CERTIFIED', note: 'Residential Contractor', className: 'malarkey' },
-  { logo: 'Owens Corning', title: 'PREFERRED', note: 'Contractor', className: 'owens' },
-  { logo: 'BBB', title: 'A+ Rating', note: 'Accredited Business', className: 'bbb' },
-]
-
-const reviews = [
-  {
-    stars: '★★★★★',
-    quote: '“CMAC Roofing was fast, professional, and the quality is second to none. Highly recommend!”',
-    name: 'Jason M.',
-    city: 'Tulsa, OK',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&h=80&q=80',
-  },
-  {
-    stars: '★★★★★',
-    quote: "“They handled our storm damage claim start to finish. Couldn't have asked for a better experience.”",
-    name: 'Sarah T.',
-    city: 'Nashville, TN',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80',
-  },
-  {
-    stars: '★★★★★',
-    quote: '“Veteran owned and it shows. Integrity, communication, and craftsmanship all the way.”',
-    name: 'Robert K.',
-    city: 'Dallas, TX',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&h=80&q=80',
-  },
-]
+const homeReviews = reviewsFor(3)
+const homeDoc = docByPath('/')!
 
 export default function Page() {
   return (
-    <main className="site-shell">
-      <SiteHeader variant="roofing" />
+    <>
+      <JsonLd graph={graphFor(homeDoc)} />
+      <link rel="preload" href="/hero-house.avif" as="image" type="image/avif" fetchPriority="high" />
+      <div className="site-shell home-page">
+        <SiteHeader variant="roofing" />
 
-      <section className="hero">
-        <div className="blueprint-grid" />
-        <div className="hero-house" />
-        <div className="hero-copy">
-          <h1>
-            CMAC
-            <br />
-            ROOFING
-          </h1>
-          <p className="hero-sub">
-            Veteran-owned. Mission-focused.
-            <br />
-            Protecting what matters across 6 states.
-          </p>
-          <p className="hero-body">
-            Roofing, gutters, doors, and restoration built to endure—backed by discipline, integrity, and unmatched
-            quality.
-          </p>
-          <div className="hero-buttons">
-            <RedButton>Request Inspection</RedButton>
-            <a className="btn btn-outline" href="#services">
-              Explore Services
-            </a>
-          </div>
-        </div>
-
-        <form id="inspection" className="inspection-card">
-          <h2>REQUEST INSPECTION</h2>
-          <p>Fast. Free. No obligation.</p>
-          <input aria-label="Full Name" placeholder="Full Name" />
-          <input aria-label="Phone Number" placeholder="Phone Number" />
-          <input aria-label="Email Address" placeholder="Email Address" />
-          <label className="select-like">
-            <span>Service Needed</span>
-            <ChevronDown size={14} />
-          </label>
-          <input aria-label="Property Address" placeholder="Property Address" />
-          <label className="select-like">
-            <span>Preferred Date</span>
-            <CalendarDays size={14} />
-          </label>
-          <button type="button">
-            Schedule Inspection <ArrowRight size={13} />
-          </button>
-          <small>We typically respond within 15 minutes.</small>
-        </form>
-
-        <div className="trust-row">
-          {trustBadges.map(({ title, detail, Icon }) => (
-            <div className="trust-item" key={title}>
-              <IconBox soft>
-                <Icon size={15} />
-              </IconBox>
-              <span>
-                <b>{title}</b>
-                <em>{detail}</em>
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="states" className="panel states-panel">
-        <div className="states-art" />
-        <div className="states-copy">
-          <span className="section-label red">SYSTEM STATUS</span>
-          <h2>
-            Proudly Serving
-            <br />6 States
-          </h2>
-          <ul>
-            <li>Texas</li>
-            <li>Tennessee</li>
-            <li>Oklahoma</li>
-            <li>Georgia</li>
-            <li>Arkansas</li>
-            <li className="dim">
-              Expanding to serve
+      <main id="main-content">
+        <section className="hero" aria-labelledby="home-title">
+          <div className="blueprint-grid" aria-hidden="true" />
+          <div className="hero-house" aria-hidden="true" />
+          <div className="hero-copy">
+            <h1 id="home-title">
+              CMAC
               <br />
-              more communities.
-            </li>
-          </ul>
-        </div>
-        <aside className="local-card">
-          <IconBox soft>
-            <MapPinned size={20} />
-          </IconBox>
-          <p>
-            Local teams.
-            <br />
-            Rapid response.
-            <br />
-            Built for your region.
-          </p>
-          <a href="#footer">
-            View All Locations <ArrowRight size={11} />
-          </a>
-        </aside>
-      </section>
+              ROOFING
+            </h1>
+            <p className="hero-sub">
+              Veteran-owned. Mission-focused.
+              <br />
+              Protecting what matters across five states.
+            </p>
+            <p className="hero-body">
+              Roofing, gutters, garage doors, and restoration built around disciplined service, clear communication,
+              and durable work.
+            </p>
+            <div className="hero-buttons">
+              <RedButton href="/quote">Request Inspection</RedButton>
+              <a className="btn btn-outline" href="#services">
+                Explore Services
+              </a>
+            </div>
+          </div>
 
-      <section id="services" className="panel services-panel">
-        <span className="section-label">OUR SERVICE SYSTEM</span>
-        <h2>Complete Exterior. Total Protection.</h2>
-        <div className="service-grid">
-          {services.map(({ title, body, image, link, Icon }) => (
-            <article className="service-card" key={title}>
-              <img src={image} alt="" />
-              <div className="image-vignette" />
-              <IconBox soft>
-                <Icon size={17} />
-              </IconBox>
-              <div>
-                <h3>{title}</h3>
-                <p>{body}</p>
-                <a href="#inspection">
-                  {link} <ArrowRight size={11} />
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+          <QuoteForm />
 
-      <section id="process" className="panel process-panel">
-        <div className="process-title">
-          <span className="section-label">OUR PROCESS</span>
-          <h2>
-            Built on a
-            <br />
-            Disciplined Process
-          </h2>
-        </div>
-        <div className="timeline">
-          {processSteps.map(({ n, title, detail, Icon }, index) => (
-            <article className={index === 0 ? 'step active-step' : 'step'} key={n}>
-              <span className="step-number">{n}</span>
-              <span className="step-icon">
-                <Icon size={20} />
-              </span>
-              <h3>{title}</h3>
-              <p>{detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel credentials-panel">
-        <span className="section-label">CERTIFIED. TRUSTED. PROVEN.</span>
-        <h2>Credentials You Can Count On.</h2>
-        <div className="credential-grid">
-          {credentials.map((credential) => (
-            <article className="credential-card" key={credential.logo}>
-              <strong className={credential.className}>{credential.logo}</strong>
-              <b>{credential.title}</b>
-              <span>{credential.note}</span>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel press-panel">
-        <div>
-          <span className="section-label">AS SEEN IN</span>
-          <h2>
-            Recognized for
-            <br />
-            Excellence
-          </h2>
-        </div>
-        <div className="press-logos">
-          <span className="forbes">Forbes</span>
-          <span className="entrepreneur">Entrepreneur</span>
-          <span className="inc">Inc.</span>
-          <span className="roofing-logo">
-            ROOFING
-            <br />
-            CONTRACTOR
-          </span>
-          <span className="yahoo">
-            yahoo!<small>finance</small>
-          </span>
-        </div>
-      </section>
-
-      <section className="panel reviews-panel">
-        <div className="review-title">
-          <span className="section-label">WHAT OUR CLIENTS SAY</span>
-          <h2>
-            Real Reviews.
-            <br />
-            Real Results.
-          </h2>
-        </div>
-        <button className="arrow-control left" aria-label="Previous review">
-          <ChevronLeft size={15} />
-        </button>
-        <div className="review-grid">
-          {reviews.map((review) => (
-            <article className="review-card" key={review.name}>
-              <strong>{review.stars}</strong>
-              <p>{review.quote}</p>
-              <div className="review-person">
-                <img src={review.avatar} alt="" />
+          <div className="trust-row" aria-label="CMAC credentials">
+            {trustBadges.map(({ title, detail, Icon }) => (
+              <div className="trust-item" key={title}>
+                <IconBox soft>
+                  <Icon size={15} aria-hidden="true" />
+                </IconBox>
                 <span>
-                  <b>{review.name}</b>
-                  <em>{review.city}</em>
+                  <b>{title}</b>
+                  <em>{detail}</em>
                 </span>
               </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="states" className="panel states-panel" aria-labelledby="states-title">
+          <div className="states-art" aria-hidden="true" />
+          <div className="states-copy">
+            <span className="section-label red">SERVICE NETWORK</span>
+            <h2 id="states-title">
+              Proudly Serving
+              <br />5 States
+            </h2>
+            <ul>
+              {org.states.map((state) => (
+                <li key={state}>{state}</li>
+              ))}
+            </ul>
+          </div>
+          <aside className="local-card">
+            <IconBox soft>
+              <MapPinned size={20} aria-hidden="true" />
+            </IconBox>
+            <p>
+              Regional teams.
+              <br />
+              Local addresses.
+              <br />
+              One CMAC standard.
+            </p>
+            <Link href="/locations">
+              View All Locations <ArrowRight size={11} aria-hidden="true" />
+            </Link>
+          </aside>
+        </section>
+
+        <section id="services" className="panel services-panel" aria-labelledby="services-title">
+          <span className="section-label">OUR SERVICE SYSTEM</span>
+          <h2 id="services-title">Complete Exterior. Total Protection.</h2>
+          <div className="service-grid">
+            {services.map(({ title, body, image, href, Icon }) => (
+              <article className="service-card" key={title}>
+                <Image src={image} alt="" fill sizes="(max-width: 768px) 100vw, 25vw" />
+                <div className="image-vignette" aria-hidden="true" />
+                <IconBox soft>
+                  <Icon size={17} aria-hidden="true" />
+                </IconBox>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                  <Link href={href}>
+                    Explore {title} <ArrowRight size={11} aria-hidden="true" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="process" className="panel process-panel" aria-labelledby="process-title">
+          <div className="process-title">
+            <span className="section-label">OUR PROCESS</span>
+            <h2 id="process-title">
+              Built on a
+              <br />
+              Disciplined Process
+            </h2>
+          </div>
+          <div className="timeline">
+            {processSteps.map(({ n, title, detail, Icon }, index) => (
+              <article className={index === 0 ? 'step active-step' : 'step'} key={n}>
+                <span className="step-number">{n}</span>
+                <span className="step-icon">
+                  <Icon size={20} aria-hidden="true" />
+                </span>
+                <h3>{title}</h3>
+                <p>{detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel credentials-panel" aria-labelledby="credentials-title">
+          <span className="section-label">CERTIFIED. TRUSTED. PROVEN.</span>
+          <h2 id="credentials-title">Credentials You Can Verify.</h2>
+          <div className="credential-grid">
+            {credentials.map((credential) => (
+              <article className="credential-card" key={credential.id}>
+                <strong className={credential.className}>{credential.logo}</strong>
+                <b>{credential.title}</b>
+                <span>{credential.note}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel press-panel" aria-labelledby="press-title">
+          <div>
+            <span className="section-label">AS SEEN ON</span>
+            <h2 id="press-title">
+              CMAC in
+              <br />
+              the Media
+            </h2>
+          </div>
+          <div className="press-logos">
+            {press.map((outlet) => (
+              <span key={outlet.id} className={outlet.className}>
+                {outlet.name}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel reviews-panel" aria-labelledby="reviews-title">
+          <div className="review-title">
+            <span className="section-label">FROM VERIFIED SOURCES</span>
+            <h2 id="reviews-title">
+              Customer
+              <br />
+              Experiences
+            </h2>
+          </div>
+          <div className="review-grid">
+            {homeReviews.map((review) => (
+              <article className="review-card" key={review.id}>
+                <strong aria-label={`${review.rating} out of 5 stars`}>{'★'.repeat(review.rating)}</strong>
+                <p>“{review.body.length > 205 ? `${review.body.slice(0, 202)}…` : review.body}”</p>
+                <div className="review-person">
+                  <span>
+                    <b>{review.author}</b>
+                    <em>{review.city}</em>
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+          <a className="review-source" href={aggregateRating.sourceUrl} rel="noopener noreferrer" target="_blank">
+            Read the published Google review source
+          </a>
+        </section>
+
+        <section className="cta-panel" aria-labelledby="cta-title">
+          <div className="cta-fog-layer" aria-hidden="true" />
+          <div className="cta-copy">
+            <span className="section-label">READY FOR PEACE OF MIND?</span>
+            <h2 id="cta-title">
+              Let’s Protect
+              <br />
+              What Matters.
+            </h2>
+            <p>Request a free inspection and a written recommendation from an experienced CMAC team.</p>
+          </div>
+          <div className="benefit-card">
+            <article>
+              <CalendarDays size={29} aria-hidden="true" />
+              <h3>Easy Request</h3>
+              <p>Start online whenever it is convenient.</p>
             </article>
-          ))}
-        </div>
-        <button className="arrow-control right" aria-label="Next review">
-          <ChevronRight size={15} />
-        </button>
-      </section>
-
-      <section className="cta-panel">
-        <div className="cta-fog-layer" aria-hidden="true" />
-        <div className="cta-copy">
-          <span className="section-label">READY FOR PEACE OF MIND?</span>
-          <h2>
-            Let’s Protect
-            <br />
-            What Matters.
-          </h2>
-          <p>Get a free inspection and expert recommendation from a team that treats your property like our own.</p>
-        </div>
-        <div className="benefit-card">
-          <article>
-            <CalendarDays size={29} />
-            <h3>Fast Scheduling</h3>
-            <p>
-              Book online in
-              <br />
-              60 seconds.
-            </p>
-          </article>
-          <article>
-            <Shield size={31} />
-            <h3>No Obligation</h3>
-            <p>
-              Free inspection
-              <br />& honest answers.
-            </p>
-          </article>
-          <article>
-            <Headphones size={31} />
-            <h3>Quick Response</h3>
-            <p>
-              We respond within
-              <br />
-              15 minutes.
-            </p>
-          </article>
-          <div className="benefit-actions">
-            <RedButton wide>Request Inspection</RedButton>
-            <a className="btn btn-outline btn-wide" href="tel:8332623222">
-              <Phone size={12} /> (833) 262-3222
-            </a>
+            <article>
+              <Shield size={31} aria-hidden="true" />
+              <h3>No Obligation</h3>
+              <p>Free inspection and straightforward answers.</p>
+            </article>
+            <article>
+              <Headphones size={31} aria-hidden="true" />
+              <h3>Direct Contact</h3>
+              <p>Call the CMAC team with urgent questions.</p>
+            </article>
+            <div className="benefit-actions">
+              <RedButton wide href="/quote">
+                Request Inspection
+              </RedButton>
+              <a className="btn btn-outline btn-wide" href={`tel:${org.phoneDigits}`}>
+                <Phone size={12} aria-hidden="true" /> {org.phone}
+              </a>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      <footer id="footer" className="footer-panel">
-        <div className="footer-top">
-          <Logo small />
-          <p>Veteran-owned roofing, gutters, doors, and restoration services across 6 states.</p>
-          <nav>
-            <h3>Quick Links</h3>
-            <a href="#services">Services</a>
-            <a href="#process">Our Process</a>
-            <a href="#states">Locations</a>
-            <a href="#footer">About Us</a>
-          </nav>
-          <nav>
-            <h3>Resources</h3>
-            <a href="#footer">Financing</a>
-            <a href="#footer">Warranty</a>
-            <a href="#footer">Insurance Claims</a>
-            <a href="#footer">Blog</a>
-          </nav>
-          <address>
-            <h3>Contact</h3>
-            <a href="tel:8332623222">(833) 262-3222</a>
-            <a href="mailto:info@cmacroofing.com">info@cmacroofing.com</a>
-            <span>24/7 Emergency Service</span>
-          </address>
-          <div className="socials">
-            <h3>Follow Us</h3>
-            <span>f</span>
-            <span>◎</span>
-            <span>▶</span>
-            <span>in</span>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <span>© 2025 CMAC Roofing. All rights reserved.</span>
-          <span>
-            <a href="#footer">Privacy Policy</a>
-            <a href="#footer">Terms of Service</a>
-          </span>
-        </div>
-      </footer>
-    </main>
+        <SiteFooter />
+      </div>
+    </>
   )
 }

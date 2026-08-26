@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // HTML and markdown are alternate representations of the same public URL.
+        source: '/:path*',
+        headers: [{ key: 'Vary', value: 'Accept, Accept-Encoding' }],
+      },
+      {
         // Machine-readable surfaces are safe to cache hard at the edge.
         source: '/:path(llms.txt|llms-full.txt)',
         headers: [

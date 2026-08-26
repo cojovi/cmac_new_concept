@@ -4,9 +4,80 @@
 > resume cleanly after any interruption. Full approved plan lives at
 > `~/.claude/plans/volumes-fastssd-github-my-repos-cmac-ne-vast-falcon.md`.
 
-**Last updated:** 2026-08-24
-**Current phase:** Phase 2 — content data layer + ~62 pages
-**Resume here:** Phase 2, step 1 — write `content/types.ts`, `content/org.ts`, `content/markets.ts`.
+**Last updated:** 2026-08-25 (full rebuild committed to `experimental` and pushed)
+**Current phase:** ✅ Rebuild, 34-route service imagery, and shared subpage structure complete; authenticated preview verified
+**Resume here:** Add `RESEND_API_KEY` and `LEAD_FROM_EMAIL` to the Vercel Preview environment when ready,
+then confirm one real lead delivery. Resend credentials remain intentionally deferred by the owner.
+
+### Git note (2026-08-25)
+
+- Commit `214a7e7` on `experimental` was only the Vite → Next.js homepage migration. The 64-route rebuild
+  (service pillars and detail pages, locations, trust/company pages, and the full footer taxonomy) lived in
+  the working tree and was never committed.
+- Pushing that commit made the git-connected Vercel preview for `experimental` replace the earlier complete
+  preview with the incomplete homepage.
+- This update commits the full working tree onto `experimental` so GitHub and Vercel match the rebuilt site,
+  including footer Services (Gutters, Commercial Roofing, Multi-Family, …) and Company (Insurance Claims, …).
+
+### Active visual enhancement
+
+- Compared the owner-supplied full-page Homepage and Restoration captures. The generated trade art was
+  strong, but the shared narrative renderer still produced one oversized prose slab beneath every hero.
+- Replaced that prose slab across all 49 service/trust documents that use it with a reusable CMAC field
+  brief: command-style overview, functional on-page chapter index, numbered scope modules, wide/pair bento
+  rhythm, styled scope rows, technical corner marks, and intrinsic mobile stacking. Existing source-backed
+  paragraphs and heading order remain intact in raw HTML and the markdown/agent surfaces.
+- Added the homepage's five-stage process rhythm to every service category and to detail pages without an
+  existing trade-specific process. Added consistent service-system/scope/explore labels and converted the
+  FAQ module to the homepage's split editorial composition on wide screens.
+- Compared the homepage aesthetic with the supplied Doors and Gutters page captures. The service pages
+  lost the homepage hierarchy through a flat hero, long narrow copy rail, and image-free service cards.
+- Added a central art-direction manifest covering all 34 public service routes, including a unique,
+  trade-accurate scene, descriptive alt text, and focal position for every category and detail page.
+- Rebuilt the shared service hero and service cards around responsive Next Image media, graphite/glass
+  layering, crimson system lighting, mobile-safe crops, and reduced-motion behavior.
+- Generated 34 unique Higgsfield scenes using the homepage hero as the exact style reference: service
+  hub, five categories, and all 28 detail pages. Every route has dedicated alt text and focal position.
+- Optimized the image family to 1440px AVIF masters; Next.js negotiates AVIF/WebP delivery. The full
+  `public/` directory is 1.8 MB and the service visual set is 1.3 MB.
+- Rebuilt the service hero/cards, added focused card-to-detail scroll reset and field-brief index tests,
+  and expanded visual QA to 31 screenshots across 320, 390, 768, 974, 1280, and 2048px plus 200% zoom.
+- Verification passes: lint, typecheck, 145-output production build, 551 checks across 64 public routes,
+  261-record redirect validation, no serious/critical axe findings, no overflow or broken images, and
+  working card-to-detail navigation at `scrollY: 0`.
+- Lighthouse on the redesigned Restoration route: Performance 90, Accessibility 100, Best Practices 100,
+  SEO 100. (The previous image-heavy Doors route remains 95/100/100/100.)
+- The in-app browser's admin security check blocked localhost access, so responsive/interaction QA used the
+  checked-in Playwright suite. It passed with no horizontal overflow, broken images, console errors, or
+  serious/critical axe findings.
+- **Updated authenticated preview:** https://cmac-new-concept-k1j5utyfc-cojovis-projects.vercel.app
+  (deployment `dpl_DMmpe1ZwswWTRQ7ZNJXNyMvB6xYX`, status Ready; `vercel curl` returned HTTP 200 and the
+  rendered field-brief/process markup on `/services/restoration`).
+
+### Completion record
+
+- **Authenticated preview:** https://cmac-new-concept-k1j5utyfc-cojovis-projects.vercel.app
+- **is-agentic:** **95/100**, “Strong technical baseline” —
+  https://is-agentic.com/scan/cmac-new-concept-eoqjsteiv-cojovis-projects.vercel.app
+- **Inventory:** 64 public documents = 2 bespoke marketing pages + 34 services + 12 locations +
+  16 trust/company pages. All 64 also have markdown twins.
+- **Verification:** lint, typecheck, production build, content validation, 549-route acceptance checks,
+  redirect validation, keyboard/axe/responsive screenshots, Lighthouse, mocked Resend delivery, NLWeb,
+  MCP, Markdown negotiation, and protected-preview smoke tests pass.
+- **Lighthouse mobile:** Performance 92, Accessibility 100, Best Practices 100, SEO 100.
+- **Legacy migration:** 261 checked-in records (260 unique sources); 249 changed URLs return 301, while
+  11 already-canonical URLs remain direct 200s to avoid redirect loops. All 47 destinations resolve 200.
+- **Assets:** `public/` reduced from 22 MB to 472 KB; active backgrounds ship as AVIF/WebP. Removed binary
+  originals were moved to the system Trash and remain recoverable.
+- **Forms:** Resend success and non-JS redirect passed against a mock provider; invalid input, honeypot,
+  missing credentials (503), and provider failure (502) were verified. The protected preview degrades
+  honestly until the two required Resend variables are configured.
+- **Protection:** Preview SSO protection was restored after the external scan. No DNS, production-domain,
+  Search Console, or off-site listing changes were made.
+- **Remaining limitations:** brand-search/NAP consistency depends on external indexing and listings. The
+  external scan also reports a false-positive developer-resource search for “Vercel” and does not award
+  full MCP discovery credit despite successful Streamable HTTP handshakes at both `/mcp` and
+  `/.well-known/mcp`.
 
 ---
 
@@ -48,10 +119,10 @@ site with the same score.
 | JSON-LD structured data | ⚠️ Partial | `@graph` with name + description on every page | 3 |
 | Organization schema completeness | ⚠️ Partial | `contactPoint` per market + `PostalAddress` | 3 |
 | Trust anchor pages | ⚠️ Partial | `/about`, `/contact`, `/privacy-policy`, each ≥500 chars | 2 |
-| Schema type breadth | ⚠️ Partial | `FAQPage`, `Service`, `AggregateRating`, `BreadcrumbList`, `Offer` | 3 |
+| Schema type breadth | ⚠️ Partial | `FAQPage`, `Service`, `BreadcrumbList`, `Offer` (review schema intentionally omitted) | 3 |
 | llms.txt links resolve | ⚠️ Partial | links emitted from `allDocs()` — true by construction | 3 |
 | Brand name discoverability | ❌ Failed | consistent NAP + Organization schema (off-site work too) | 3/5 |
-| Bonus: llms-full, per-section llms, `?mode=agent`, MCP card, UCP, NLWeb `/ask` | ✅ keep/earn | route handlers | 3 |
+| Bonus: llms-full, per-section llms, `?mode=agent`, MCP card, NLWeb `/ask` | ✅ keep/earn | route handlers; no UCP claim | 3 |
 
 ---
 
@@ -108,80 +179,80 @@ The concept homepage contains placeholder content that reads as real. All of it 
 
 ---
 
-## 5. Page inventory (~62)
+## 5. Page inventory (64)
 
 Legend: ⬜ not started · 🟡 in progress · ✅ done
 
 ### Core
-- ⬜ `/` Home
-- ⬜ `/mini-homes`
-- ⬜ `/services` hub
-- ⬜ `/locations` hub
+- ✅ `/` Home
+- ✅ `/mini-homes`
+- ✅ `/services` hub
+- ✅ `/locations` hub
 
 ### Services — Roofing (9)
-- ⬜ `/services/roofing`
-- ⬜ `/services/roofing/roof-repairs`
-- ⬜ `/services/roofing/roof-replacement` *(new — highest-intent term, missing from their site)*
-- ⬜ `/services/roofing/new-construction`
-- ⬜ `/services/roofing/custom-homes`
-- ⬜ `/services/roofing/specialty-systems`
-- ⬜ `/services/roofing/commercial-roofing`
-- ⬜ `/services/roofing/multi-family`
-- ⬜ `/services/roofing/home-additions`
+- ✅ `/services/roofing`
+- ✅ `/services/roofing/roof-repairs`
+- ✅ `/services/roofing/roof-replacement` *(new — highest-intent term, missing from their site)*
+- ✅ `/services/roofing/new-construction`
+- ✅ `/services/roofing/custom-homes`
+- ✅ `/services/roofing/specialty-systems`
+- ✅ `/services/roofing/commercial-roofing`
+- ✅ `/services/roofing/multi-family`
+- ✅ `/services/roofing/home-additions`
 
 ### Services — Gutters (6)
-- ⬜ `/services/gutters`
-- ⬜ `/services/gutters/installation`
-- ⬜ `/services/gutters/repairs`
-- ⬜ `/services/gutters/gutter-guards`
-- ⬜ `/services/gutters/maintenance`
-- ⬜ `/services/gutters/commercial-gutters`
+- ✅ `/services/gutters`
+- ✅ `/services/gutters/installation`
+- ✅ `/services/gutters/repairs`
+- ✅ `/services/gutters/gutter-guards`
+- ✅ `/services/gutters/maintenance`
+- ✅ `/services/gutters/commercial-gutters`
 
 ### Services — Doors (7)
-- ⬜ `/services/doors`
-- ⬜ `/services/doors/residential-garage-doors`
-- ⬜ `/services/doors/commercial-garage-doors`
-- ⬜ `/services/doors/openers`
-- ⬜ `/services/doors/repair`
-- ⬜ `/services/doors/brands`
-- ⬜ `/services/doors/gallery`
+- ✅ `/services/doors`
+- ✅ `/services/doors/residential-garage-doors`
+- ✅ `/services/doors/commercial-garage-doors`
+- ✅ `/services/doors/openers`
+- ✅ `/services/doors/repair`
+- ✅ `/services/doors/brands`
+- ✅ `/services/doors/gallery`
 
 ### Services — Restoration (6)
-- ⬜ `/services/restoration`
-- ⬜ `/services/restoration/water-mitigation`
-- ⬜ `/services/restoration/fire-smoke-damage`
-- ⬜ `/services/restoration/resurfacing-refinishing`
-- ⬜ `/services/restoration/floor-care-odor-control`
-- ⬜ `/services/restoration/biohazard-trauma-cleanup`
+- ✅ `/services/restoration`
+- ✅ `/services/restoration/water-mitigation`
+- ✅ `/services/restoration/fire-smoke-damage`
+- ✅ `/services/restoration/resurfacing-refinishing`
+- ✅ `/services/restoration/floor-care-odor-control`
+- ✅ `/services/restoration/biohazard-trauma-cleanup`
 
 ### Services — Exteriors (5)
-- ⬜ `/services/exteriors`
-- ⬜ `/services/exteriors/siding`
-- ⬜ `/services/exteriors/windows`
-- ⬜ `/services/exteriors/decks`
-- ⬜ `/services/exteriors/exterior-painting`
+- ✅ `/services/exteriors`
+- ✅ `/services/exteriors/siding`
+- ✅ `/services/exteriors/windows`
+- ✅ `/services/exteriors/decks`
+- ✅ `/services/exteriors/exterior-painting`
 
-### Services — other
-- ⬜ `/services/plumbing` *(pending owner confirmation — see §7 Q7)*
+### Deliberately omitted
+- ➖ `/services/plumbing` — not a verified CMAC service; legacy traffic redirects to `/services`
 
 ### Locations (13)
-- ⬜ `/locations/texas` · `/locations/texas/dallas-fort-worth` · `/locations/texas/houston` · `/locations/texas/austin`
-- ⬜ `/locations/oklahoma` · `/locations/oklahoma/oklahoma-city`
-- ⬜ `/locations/tennessee` · `/locations/tennessee/nashville`
-- ⬜ `/locations/arkansas`
-- ⬜ `/locations/georgia` · `/locations/georgia/atlanta`
+- ✅ `/locations/texas` · `/locations/texas/dallas-fort-worth` · `/locations/texas/houston` · `/locations/texas/austin`
+- ✅ `/locations/oklahoma` · `/locations/oklahoma/oklahoma-city`
+- ✅ `/locations/tennessee` · `/locations/tennessee/nashville`
+- ✅ `/locations/arkansas`
+- ✅ `/locations/georgia` · `/locations/georgia/atlanta`
 
-### Company & trust (14)
-- ⬜ `/about` · `/contact` · `/quote` · `/reviews` · `/faqs`
-- ⬜ `/warranty` · `/insurance-claims` · `/storm-response` · `/pricing`
-- ⬜ `/partners` (Join The Vision — subcontractor recruitment, *not* careers)
-- ⬜ `/privacy-policy` · `/terms` · `/accessibility` · `/sitemap-page` · `/ai`
+### Company & trust (16)
+- ✅ `/about` · `/contact` · `/quote` · `/reviews` · `/faqs`
+- ✅ `/warranty` · `/register-my-roof` · `/insurance-claims` · `/storm-response` · `/pricing`
+- ✅ `/partners` (Join The Vision — subcontractor recruitment, *not* careers)
+- ✅ `/privacy-policy` · `/terms` · `/accessibility` · `/sitemap-page` · `/ai`
 
 ### Machine surfaces
-- ⬜ `/llms.txt` · `/llms-full.txt` · `/services/llms.txt` · `/locations/llms.txt`
-- ⬜ `/_md/*` markdown twins · `/sitemap.xml` · `/robots.txt`
-- ⬜ `/ask` (NLWeb) · `/.well-known/mcp/server-card.json` · `/.well-known/ucp`
-- ⬜ `?mode=agent`
+- ✅ `/llms.txt` · `/llms-full.txt` · `/services/llms.txt` · `/locations/llms.txt`
+- ✅ `/_md/*` markdown twins · `/sitemap.xml` · `/robots.txt`
+- ✅ `/ask` (NLWeb) · `/.well-known/mcp` · `/.well-known/mcp/server-card.json` · `/mcp`
+- ✅ `?mode=agent`
 
 ---
 
@@ -191,10 +262,10 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 |---|---|---|
 | **0** | PROGRESS.md, decisions log | ✅ done |
 | **1** | Next 16 scaffold · `globals.css` · home + Mini-Homes ported · `MobileNavToggle` · `next/font` · router removed | ✅ done |
-| **2** | `content/` data layer · section components · `PageShell` · 8 templates · all ~62 pages | 🟡 in progress |
-| **3** | middleware · `/_md` · not-found · sitemap/robots · llms.txt family · JSON-LD · `/ask` · `.well-known` · 301s | ⬜ |
-| **4** | asset purge · AVIF/WebP · preloads · WOFF2 · focus rings · tablet breakpoint · type floor · form wiring | ⬜ |
-| **5** | cutover: DNS, GSC sitemap | ⬜ |
+| **2** | `content/` data layer · section components · `PageShell` · 8 templates · all 64 pages | ✅ done |
+| **3** | proxy · `/_md` · not-found · sitemap/robots · llms.txt family · JSON-LD · `/ask` · `.well-known` · 301s | ✅ done |
+| **4** | asset purge · AVIF/WebP · preloads · focus rings · breakpoints · type floor · Resend forms | ✅ done |
+| **5** | production cutover: DNS, GSC sitemap | ➖ intentionally out of scope |
 
 ### Phase 1 checklist — ✅ complete
 - ✅ Installed `next@16.3.2`; removed `vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`, `react-router-dom`, `framer-motion` (was installed and never imported)
@@ -237,20 +308,20 @@ you want Arial back.**
 
 ---
 
-## 7. Open questions for the owner (non-blocking — building around them)
+## 7. Owner follow-ups before production
 
-1. **Reviews** — real Google review text + names, or wire a live Google Places feed? Without either, the
-   reviews section ships without `AggregateRating`.
-2. **Certifications** — are IKO ROOFPRO, Malarkey, and Owens Corning Preferred real? If unverified I ship
-   GAF Master Elite, GAF President's Club, BBB A+, NRCA + CertainTeed/Atlas/TAMKO.
-3. **Warranty terms** — nothing is published anywhere. Durations and coverage?
-4. **NAP conflicts** — OKC `3613 S Moulton Dr` vs `3621 Moulton Dr`. DFW contact is joec@ / jason@ /
-   brianm@ across three pages with three different phones (817-228-6924, 682-218-7221, 214-683-7663).
-   Which is canonical?
-5. **Founding year** — "over 15 years" and "over two decades" both appear on the live site.
-6. **Form destination** — where do quote submissions go? Email, CRM webhook, both?
-7. **Plumbing** — real service or drop it? It's a "Coming soon" stub but advertised on all 7 geo pages.
-8. **Pirulen font license** — commercial Typodermic/Larabie face. Confirm webfont embedding is permitted.
+1. **Resend preview configuration** — set `RESEND_API_KEY` and `LEAD_FROM_EMAIL`; optionally set
+   `LEAD_TO_EMAIL` (defaults to `info@cmacroofing.com`). Then submit one real lead from each workflow.
+2. **Legal and warranty review** — approve the generated privacy, terms, insurance, and warranty copy.
+   No unverified warranty duration is published.
+3. **NAP arbitration** — `/locations` remains the canonical source, but CMAC should resolve conflicting
+   OKC and DFW address/contact records across its own site and external business listings.
+4. **Off-site brand discovery** — consistent listings, canonical-domain indexing, and linked press mentions
+   are still required for the is-agentic brand-search check; this cannot be completed in the codebase.
+5. **Pirulen license** — the owner directed that Pirulen remain and the build assumes CMAC has web-embedding
+   rights. Confirm that assumption before production launch.
+6. **Production cutover** — DNS, Search Console, sitemap submission, analytics, and production email delivery
+   remain deliberately untouched.
 
 ---
 
@@ -266,3 +337,6 @@ you want Arial back.**
 | 2026-08-24 | `PageDoc` normalization: HTML, markdown twin, JSON-LD, sitemap, and llms.txt all render from one object so they cannot drift. |
 | 2026-08-24 | FAQ uses native `<details name="faq">` — answers must be in raw HTML or check #1 re-fails. |
 | 2026-08-24 | No LLM behind `/ask` — unauthenticated public POST. Deterministic BM25 retrieval instead. |
+| 2026-08-25 | Review excerpts remain visibly attributed and linked, but `Review` and `AggregateRating` JSON-LD are intentionally omitted as self-serving business markup. |
+| 2026-08-25 | Plumbing and UCP commerce claims removed; neither is a verified public CMAC offering. |
+| 2026-08-25 | Preview deployed with Vercel SSO protection; no production deployment or domain mutation performed. |

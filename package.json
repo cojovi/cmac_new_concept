@@ -9,17 +9,27 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "validate:redirects": "node scripts/check-redirects.mjs",
+    "optimize:assets": "node scripts/optimize-assets.mjs",
+    "generate:service-visuals": "node scripts/generate-service-visuals.mjs",
+    "optimize:service-visuals": "node scripts/optimize-service-visuals.mjs",
+    "verify:site": "node scripts/verify-site.mjs",
+    "verify:visual": "node scripts/visual-audit.mjs",
     "screenshot": "node scripts/screenshot.js",
-    "audit:agentic": "node scripts/agent-audit.mjs"
+    "audit:agentic": "npx --yes is-agentic"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "lucide-react": "^1.17.0",
     "next": "^16.3.2",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "tailwindcss": "^4.3.0"
+    "resend": "^6.22.1",
+    "tailwindcss": "^4.3.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^24.12.3",
