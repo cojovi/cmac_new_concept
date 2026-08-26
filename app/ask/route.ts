@@ -5,15 +5,53 @@ const VERSION = '0.55'
 const RESPONSE_FORMAT = 'conversational_search'
 
 interface AskBody {
-  query?: { text?: unknown; site?: unknown; itemType?: unknown }
+  query?: string | { text?: unknown; site?: unknown; itemType?: unknown }
   prefer?: { streaming?: unknown; response_format?: unknown; mode?: unknown }
   meta?: { version?: unknown }
 }
 
+const publicHeaders = { 'Access-Control-Allow-Origin': '*' }
+
 function failure(code: string, message: string, status = 200) {
   return Response.json(
     { _meta: { response_type: 'failure', version: VERSION }, error: { code, message } },
-    { status, headers: { 'Cache-Control': 'no-store' } },
+    { status, headers: { ...publicHeaders, 'Cache-Control': 'no-store' } },
+  )
+}
+
+function queryText(query: AskBody['query']) {
+  if (typeof query === 'string') return query.trim()
+  return typeof query?.text === 'string' ? query.text.trim() : ''
+}
+
+function answer(text: string, origin: string) {
+  if (!text || text.length > 500) {
+    return failure('INVALID_QUERY', 'query or query.text must contain between 1 and 500 characters.', 400)
+  }
+
+  const results = searchDocs(text, 8).map((result) => ({
+    '@context': result['@context'],
+    '@type': result['@type'],
+    name: result.name,
+    description: result.description,
+    url: `${origin}${result.path === '/' ? '' : result.path}`,
+    dateModified: result.dateModified,
+  }))
+  if (results.length === 0) {
+    return failure('NO_RESULTS', 'No CMAC pages matched that query.')
+  }
+
+  return Response.json(
+    {
+      _meta: { response_type: 'answer', response_format: RESPONSE_FORMAT, version: VERSION },
+      results,
+    },
+    {
+      headers: {
+        ...publicHeaders,
+        'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600',
+      },
+    },
   )
 }
 
@@ -25,10 +63,7 @@ export async function POST(request: Request) {
     return failure('INVALID_QUERY', 'Request body must be valid JSON.', 400)
   }
 
-  const text = typeof body.query?.text === 'string' ? body.query.text.trim() : ''
-  if (!text || text.length > 500) {
-    return failure('INVALID_QUERY', 'query.text must contain between 1 and 500 characters.', 400)
-  }
+  const text = queryText(body.query)
 
   const requestedVersion = body.meta?.version
   if (requestedVersion !== undefined && requestedVersion !== VERSION) {
@@ -49,37 +84,23 @@ export async function POST(request: Request) {
     return failure('UNSUPPORTED_MODE', 'Streaming is not supported; request a non-streaming list response.')
   }
 
-  const results = searchDocs(text, 8).map((result) => ({
-    '@context': result['@context'],
-    '@type': result['@type'],
-    name: result.name,
-    description: result.description,
-    url: result.url,
-    dateModified: result.dateModified,
-  }))
-  if (results.length === 0) {
-    return failure('NO_RESULTS', 'No CMAC pages matched that query.')
-  }
-
-  return Response.json(
-    {
-      _meta: { response_type: 'answer', response_format: RESPONSE_FORMAT, version: VERSION },
-      results,
-    },
-    { headers: { 'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=3600' } },
-  )
+  return answer(text, new URL(request.url).origin)
 }
 
-export function GET() {
+export function GET(request: Request) {
+  const url = new URL(request.url)
+  const query = (url.searchParams.get('query') ?? url.searchParams.get('q') ?? '').trim()
+  if (query) return answer(query, url.origin)
+
   return Response.json(
     {
       name: 'CMAC Roofing NLWeb endpoint',
       version: VERSION,
-      method: 'POST',
+      methods: ['GET', 'POST'],
       mode: 'list',
-      request: { query: { text: 'roof repair in Dallas' }, prefer: { mode: 'list' }, meta: { version: VERSION } },
+      request: { query: 'roof repair in Dallas', prefer: { mode: 'list' }, meta: { version: VERSION } },
     },
-    { headers: { Allow: 'POST' } },
+    { headers: { ...publicHeaders, Allow: 'GET, POST' } },
   )
 }
 
@@ -101,5 +122,13 @@ export const PATCH = methodNotAllowed
 export const DELETE = methodNotAllowed
 
 export function OPTIONS() {
-  return new Response(null, { status: 204, headers: { Allow: 'GET, POST, OPTIONS' } })
+  return new Response(null, {
+    status: 204,
+    headers: {
+      ...publicHeaders,
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      Allow: 'GET, POST, OPTIONS',
+    },
+  })
 }

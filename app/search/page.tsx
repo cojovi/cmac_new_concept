@@ -26,7 +26,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <p className="eyebrow">CMAC Site Search</p>
             <h1>Search CMAC Roofing</h1>
             <p>Find services, service areas, and company information from the same content index used by our agent interfaces.</p>
-            <form action="/search" method="get" role="search" style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem', marginTop: '1.5rem', maxWidth: '48rem' }}>
+            <form
+              {...{
+                toolname: 'search_cmac_site',
+                tooldescription:
+                  "Search CMAC Roofing's public services, locations, and company information. This tool is read-only.",
+              }}
+              action="/search"
+              method="get"
+              role="search"
+              style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem', marginTop: '1.5rem', maxWidth: '48rem' }}
+            >
               <label className="sr-only" htmlFor="site-search">Search this site</label>
               <input
                 id="site-search"
@@ -65,4 +75,3 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     </div>
   )
 }
-

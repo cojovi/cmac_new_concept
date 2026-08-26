@@ -10,14 +10,18 @@ Use these interfaces to retrieve CMAC Roofing's public services, locations, cont
 - [Developer documentation](/developers)
 - [OpenAPI 3.1 description](/openapi.json)
 - [RFC 9727 API catalog](/.well-known/api-catalog)
+- [Agentic Resource Discovery catalog](/.well-known/ai-catalog.json)
+- [Agent Skills index](/.well-known/agent-skills/index.json)
 - [MCP server card](/.well-known/mcp/server-card.json)
 - [Main agent index](/llms.txt)
 
 ## Retrieval
 
-- GET /agent?path=/services/roofing returns one published page as JSON plus Markdown.
-- POST /ask implements deterministic NLWeb 0.55 list-mode search.
-- POST /mcp implements public, read-only Streamable HTTP MCP tools.
+- GET /api/v1/pages returns the public page catalog with cursor pagination.
+- GET /api/v1/page?path=/services/roofing returns one published page as JSON plus Markdown.
+- GET /api/v1/search?q=roof+repair returns cursor-paginated deterministic search results.
+- GET or POST /ask implements deterministic NLWeb 0.55 list-mode search.
+- POST /.well-known/mcp or /mcp implements public, read-only Streamable HTTP MCP tools.
 - Send Accept: text/markdown to a content URL or append .md for its Markdown representation.
 
 ## Safety and errors

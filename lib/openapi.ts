@@ -44,7 +44,7 @@ export function openApiDocument(origin: string) {
     openapi: '3.1.1',
     info: {
       title: 'CMAC Roofing public retrieval API',
-      version: '1.0.0',
+      version: '1.1.0',
       description:
         'Public, read-only retrieval interfaces for CMAC Roofing published pages and deterministic NLWeb search. No API key, account, OAuth flow, or permission scope is required. These operations cannot create leads, change site content, or perform commerce.',
       termsOfService: `${origin}/terms`,
@@ -55,16 +55,129 @@ export function openApiDocument(origin: string) {
     externalDocs: { description: 'CMAC developer and agent documentation', url: `${origin}/developers` },
     security: [],
     tags: [
+      { name: 'Catalog', description: 'Enumerate public CMAC pages with cursor-based pagination.' },
       { name: 'Content', description: 'Read one published CMAC page in a structured representation.' },
       { name: 'Search', description: 'Search the same public PageDoc index used by the website.' },
     ],
     paths: {
+      '/api/v1/pages': {
+        get: {
+          operationId: 'listCmacPublishedPages',
+          summary: 'List published CMAC pages',
+          description:
+            'Returns the public page catalog with opaque cursor-based pagination. This versioned operation is read-only and requires no authentication.',
+          security: [],
+          tags: ['Catalog'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'limit',
+              required: false,
+              description: 'Number of pages to return.',
+              schema: { type: 'integer', minimum: 1, maximum: 50, default: 20 },
+            },
+            {
+              in: 'query',
+              name: 'cursor',
+              required: false,
+              description: 'Opaque pagination cursor returned as pagination.nextCursor by a previous response.',
+              schema: { type: 'string', minLength: 1 },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'One page of the published content catalog',
+              content: { 'application/json': { schema: { $ref: '#/components/schemas/PageList' } } },
+            },
+            '400': {
+              description: 'Invalid limit or cursor',
+              content: { 'application/problem+json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+            },
+          },
+        },
+      },
+      '/api/v1/page': {
+        get: {
+          operationId: 'getCmacPublishedPageV1',
+          summary: 'Get one published CMAC page',
+          description: 'Returns canonical metadata and Markdown for one public CMAC path.',
+          security: [],
+          tags: ['Content'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'path',
+              required: false,
+              description: 'Canonical content path. Defaults to the homepage.',
+              schema: { type: 'string', pattern: '^/', maxLength: 300, default: '/' },
+              example: '/services/roofing/roof-repairs',
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Published page representation',
+              content: { 'application/json': { schema: { $ref: '#/components/schemas/PageRepresentation' } } },
+            },
+            '400': {
+              description: 'Invalid path',
+              content: { 'application/problem+json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+            },
+            '404': {
+              description: 'The requested path is not a published CMAC page',
+              content: { 'application/problem+json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+            },
+          },
+        },
+      },
+      '/api/v1/search': {
+        get: {
+          operationId: 'searchCmacPublishedPagesV1',
+          summary: 'Search published CMAC pages',
+          description:
+            'Runs deterministic keyword retrieval over public CMAC pages and returns cursor-paginated structured results.',
+          security: [],
+          tags: ['Search'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'q',
+              required: true,
+              description: 'Search query.',
+              schema: { type: 'string', minLength: 1, maxLength: 500 },
+              example: 'roof repair in Dallas',
+            },
+            {
+              in: 'query',
+              name: 'limit',
+              required: false,
+              schema: { type: 'integer', minimum: 1, maximum: 50, default: 20 },
+            },
+            {
+              in: 'query',
+              name: 'cursor',
+              required: false,
+              description: 'Opaque pagination cursor returned by a previous response.',
+              schema: { type: 'string', minLength: 1 },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'One page of deterministic search results',
+              content: { 'application/json': { schema: { $ref: '#/components/schemas/SearchResults' } } },
+            },
+            '400': {
+              description: 'Invalid query, limit, or cursor',
+              content: { 'application/problem+json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+            },
+          },
+        },
+      },
       '/agent': {
         get: {
           operationId: 'getCmacPublishedPage',
           summary: 'Get one published CMAC page',
           description:
-            'Returns canonical metadata and Markdown for a public CMAC content path. This is a read-only operation and requires no authentication.',
+            'Compatibility alias for /api/v1/page. Returns canonical metadata and Markdown for a public CMAC content path.',
           security: [],
           tags: ['Content'],
           parameters: [
@@ -96,14 +209,33 @@ export function openApiDocument(origin: string) {
           description: 'Returns the supported NLWeb version, response format, mode, and a sample request.',
           security: [],
           tags: ['Search'],
+          parameters: [
+            {
+              in: 'query',
+              name: 'query',
+              required: false,
+              description: 'When present, execute a deterministic NLWeb search. When absent, return endpoint capabilities.',
+              schema: { type: 'string', minLength: 1, maxLength: 500 },
+            },
+          ],
           responses: {
             '200': {
-              description: 'NLWeb capability summary',
-              content: { 'application/json': { schema: { type: 'object', additionalProperties: true } } },
+              description: 'NLWeb capability summary or deterministic search answer',
+              content: {
+                'application/json': {
+                  schema: {
+                    oneOf: [
+                      { type: 'object', additionalProperties: true },
+                      { $ref: '#/components/schemas/AskAnswer' },
+                      { $ref: '#/components/schemas/AskFailure' },
+                    ],
+                  },
+                },
+              },
             },
-            '405': {
-              description: 'Use GET to inspect capabilities or POST to run a query',
-              content: { 'application/problem+json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+            '400': {
+              description: 'Invalid query',
+              content: { 'application/json': { schema: { $ref: '#/components/schemas/AskFailure' } } },
             },
           },
         },
@@ -120,7 +252,7 @@ export function openApiDocument(origin: string) {
               'application/json': {
                 schema: { $ref: '#/components/schemas/AskRequest' },
                 example: {
-                  query: { text: 'roof repair in Dallas' },
+                  query: 'roof repair in Dallas',
                   prefer: { mode: 'list', response_format: 'conversational_search' },
                   meta: { version: '0.55' },
                 },
@@ -152,6 +284,49 @@ export function openApiDocument(origin: string) {
     components: {
       schemas: {
         ProblemDetails: problemSchema,
+        PageSummary: {
+          type: 'object',
+          required: ['@context', '@type', 'name', 'description', 'url', 'path', 'dateModified'],
+          properties: {
+            '@context': { const: 'https://schema.org' },
+            '@type': { type: 'string', enum: ['WebPage', 'Service', 'LocalBusiness'] },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            url: { type: 'string', format: 'uri' },
+            path: { type: 'string', pattern: '^/' },
+            dateModified: { type: 'string', format: 'date' },
+            score: { type: 'number', minimum: 0 },
+          },
+        },
+        Pagination: {
+          type: 'object',
+          required: ['limit', 'total', 'hasMore', 'nextCursor'],
+          properties: {
+            limit: { type: 'integer', minimum: 1, maximum: 50 },
+            total: { type: 'integer', minimum: 0 },
+            hasMore: { type: 'boolean' },
+            nextCursor: { oneOf: [{ type: 'string' }, { type: 'null' }] },
+          },
+        },
+        PageList: {
+          type: 'object',
+          required: ['apiVersion', 'items', 'pagination'],
+          properties: {
+            apiVersion: { const: 'v1' },
+            items: { type: 'array', items: { $ref: '#/components/schemas/PageSummary' } },
+            pagination: { $ref: '#/components/schemas/Pagination' },
+          },
+        },
+        SearchResults: {
+          type: 'object',
+          required: ['apiVersion', 'query', 'items', 'pagination'],
+          properties: {
+            apiVersion: { const: 'v1' },
+            query: { type: 'string' },
+            items: { type: 'array', items: { $ref: '#/components/schemas/PageSummary' } },
+            pagination: { $ref: '#/components/schemas/Pagination' },
+          },
+        },
         PageRepresentation: {
           type: 'object',
           required: ['@context', '@type', 'name', 'description', 'url', 'dateModified', 'breadcrumbs', 'markdown'],
@@ -178,13 +353,18 @@ export function openApiDocument(origin: string) {
           required: ['query'],
           properties: {
             query: {
-              type: 'object',
-              required: ['text'],
-              properties: {
-                text: { type: 'string', minLength: 1, maxLength: 500 },
-                site: { type: 'string' },
-                itemType: { type: 'string' },
-              },
+              oneOf: [
+                { type: 'string', minLength: 1, maxLength: 500 },
+                {
+                  type: 'object',
+                  required: ['text'],
+                  properties: {
+                    text: { type: 'string', minLength: 1, maxLength: 500 },
+                    site: { type: 'string' },
+                    itemType: { type: 'string' },
+                  },
+                },
+              ],
             },
             prefer: {
               type: 'object',

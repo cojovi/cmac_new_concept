@@ -49,16 +49,24 @@ function scoreDoc(doc: PageDoc, queryTokens: string[]): number {
 }
 
 export function searchDocs(query: string, limit = 8): SiteSearchResult[] {
-  const queryTokens = [...new Set(tokens(query))]
-  if (queryTokens.length === 0) return []
+  return searchDocsPage(query, 0, limit).results
+}
 
-  return allDocs()
+export function searchDocsPage(query: string, offset = 0, limit = 8): { results: SiteSearchResult[]; total: number } {
+  const queryTokens = [...new Set(tokens(query))]
+  if (queryTokens.length === 0) return { results: [], total: 0 }
+
+  const ranked = allDocs()
     .map((doc) => ({ doc, score: scoreDoc(doc, queryTokens) }))
     .filter((entry) => entry.score > 0)
     .sort((a, b) => b.score - a.score || a.doc.path.localeCompare(b.doc.path))
-    .slice(0, Math.max(1, Math.min(limit, 20)))
+
+  const safeOffset = Math.max(0, Math.trunc(offset))
+  const safeLimit = Math.max(1, Math.min(Math.trunc(limit), 50))
+  const results = ranked
+    .slice(safeOffset, safeOffset + safeLimit)
     .map(({ doc, score }) => ({
-      '@context': 'https://schema.org',
+      '@context': 'https://schema.org' as const,
       '@type': typeFor(doc),
       name: doc.h1,
       description: doc.description,
@@ -67,6 +75,8 @@ export function searchDocs(query: string, limit = 8): SiteSearchResult[] {
       dateModified: doc.updated,
       score,
     }))
+
+  return { results, total: ranked.length }
 }
 
 export function docText(doc: PageDoc): string {
@@ -76,4 +86,3 @@ export function docText(doc: PageDoc): string {
 export function isSection(value: unknown): value is Section {
   return Boolean(value && typeof value === 'object' && 'k' in value)
 }
-

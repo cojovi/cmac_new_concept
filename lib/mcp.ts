@@ -179,6 +179,7 @@ export function callMcpTool(name: string, args: Record<string, unknown>) {
 }
 
 export function mcpServerCard(origin = SITE_URL) {
+  const serverUrl = `${origin}/.well-known/mcp`
   return {
     $schema: 'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
     name: `${MCP_SERVER_INFO.name}/mcp`,
@@ -187,6 +188,13 @@ export function mcpServerCard(origin = SITE_URL) {
     description: 'Public, read-only access to CMAC Roofing services, locations, pages, and contact information.',
     websiteUrl: `${origin}/developers`,
     documentationUrl: `${origin}/developers`,
-    remotes: [{ type: 'streamable-http', url: `${origin}/mcp` }],
+    remotes: [
+      { type: 'streamable-http', url: serverUrl },
+      { type: 'streamable-http', url: `${origin}/mcp` },
+    ],
+    // Compatibility fields used by pre-registry discovery clients. The
+    // canonical registry schema uses `remotes`; both point at the same server.
+    serverUrl,
+    tools: MCP_TOOLS,
   }
 }

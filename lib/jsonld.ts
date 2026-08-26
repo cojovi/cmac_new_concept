@@ -1,6 +1,7 @@
 import type { Crumb, FaqItem, Market, OfferDoc, PageDoc, ServiceDoc } from '@/content/types'
 import { org } from '@/content/org'
 import { hasAddress, markets } from '@/content/markets'
+import { categories, categoryPath } from '@/content/services'
 import { SITE_NAME, SITE_URL, abs } from './site'
 
 const ORG_ID = `${SITE_URL}/#organization`
@@ -207,6 +208,20 @@ export function graphFor(doc: PageDoc) {
   if (doc.entities.service) g.push(serviceNode(doc.entities.service, doc.path))
   if (doc.entities.faqs?.length) g.push(faqNode(doc.entities.faqs, doc.path))
   if (doc.entities.offers?.length) g.push(...offerNodes(doc.entities.offers))
+  if (doc.path === '/') {
+    for (const category of categories) {
+      g.push({
+        '@type': 'Service',
+        '@id': `${abs(categoryPath(category))}#service`,
+        name: category.name,
+        description: category.summary,
+        url: abs(categoryPath(category)),
+        serviceType: category.name,
+        provider: { '@id': ORG_ID },
+        areaServed: org.states.map((name) => ({ '@type': 'State', name })),
+      })
+    }
+  }
   // Reviews remain visible with their third-party attribution, but Google treats LocalBusiness
   // review markup controlled by the reviewed business as self-serving, so no Review or
   // AggregateRating node is emitted here.

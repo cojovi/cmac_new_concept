@@ -1,7 +1,10 @@
 import type { Block, PageDoc, Section } from '@/content/types'
 import { abs } from '@/lib/site'
 
-const linkTarget = (href: string) => (href.startsWith('/') ? abs(href) : href)
+const absolute = (path: string, origin?: string) =>
+  origin ? `${origin}${path === '/' ? '' : path}` : abs(path)
+
+const linkTarget = (href: string, origin?: string) => (href.startsWith('/') ? absolute(href, origin) : href)
 
 function blockToMarkdown(block: Block): string {
   switch (block.t) {
@@ -18,10 +21,10 @@ function blockToMarkdown(block: Block): string {
   }
 }
 
-function sectionToMarkdown(section: Section): string {
+function sectionToMarkdown(section: Section, origin?: string): string {
   switch (section.k) {
     case 'hero':
-      return [section.sub, section.body, ...(section.cta ?? []).map((cta) => `[${cta.label}](${linkTarget(cta.href)})`)]
+      return [section.sub, section.body, ...(section.cta ?? []).map((cta) => `[${cta.label}](${linkTarget(cta.href, origin)})`)]
         .filter(Boolean)
         .join('\n\n')
     case 'prose':
@@ -33,7 +36,7 @@ function sectionToMarkdown(section: Section): string {
     case 'serviceGrid':
       return [
         `## ${section.heading}`,
-        ...section.items.map((item) => `- [${item.name}](${abs(item.path)}) — ${item.summary}`),
+        ...section.items.map((item) => `- [${item.name}](${absolute(item.path, origin)}) — ${item.summary}`),
       ].join('\n')
     case 'process':
       return [
@@ -67,7 +70,7 @@ function sectionToMarkdown(section: Section): string {
     case 'links':
       return [
         `## ${section.heading}`,
-        ...section.items.map((item) => `- [${item.name}](${abs(item.path)})${item.summary ? ` — ${item.summary}` : ''}`),
+        ...section.items.map((item) => `- [${item.name}](${absolute(item.path, origin)})${item.summary ? ` — ${item.summary}` : ''}`),
       ].join('\n')
     case 'form':
       return `## ${section.heading}\n\n${section.body ?? 'Use the form on the HTML page or contact CMAC directly.'}`
@@ -75,18 +78,18 @@ function sectionToMarkdown(section: Section): string {
       return [
         `## ${section.heading}`,
         section.body,
-        ...section.cta.map((cta) => `[${cta.label}](${linkTarget(cta.href)})`),
+        ...section.cta.map((cta) => `[${cta.label}](${linkTarget(cta.href, origin)})`),
       ].join('\n\n')
   }
 }
 
-export function pageDocToMarkdown(doc: PageDoc): string {
+export function pageDocToMarkdown(doc: PageDoc, origin?: string): string {
   const sources = 'sourceUrls' in doc && Array.isArray(doc.sourceUrls) ? (doc.sourceUrls as string[]) : []
   const lines = [
     '---',
     `title: ${JSON.stringify(doc.h1)}`,
     `description: ${JSON.stringify(doc.description)}`,
-    `canonical: ${JSON.stringify(abs(doc.path))}`,
+    `canonical: ${JSON.stringify(absolute(doc.path, origin))}`,
     `last-modified: ${JSON.stringify(doc.updated)}`,
     '---',
     '',
@@ -94,10 +97,10 @@ export function pageDocToMarkdown(doc: PageDoc): string {
     '',
     `> ${doc.description}`,
     '',
-    `Canonical: ${abs(doc.path)}`,
+    `Canonical: ${absolute(doc.path, origin)}`,
     `Last updated: ${doc.updated}`,
     '',
-    ...doc.sections.map(sectionToMarkdown).flatMap((text) => [text, '']),
+    ...doc.sections.map((section) => sectionToMarkdown(section, origin)).flatMap((text) => [text, '']),
   ]
 
   if (sources.length > 0) {

@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto'
+
 const base = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/$/, '')
 
 const failures = []
@@ -108,6 +110,7 @@ for (const path of ['/llms.txt', '/llms-full.txt', '/services/llms.txt', '/locat
   check(response.status === 200, `${path} returns 200`, String(response.status))
   const text = await response.text()
   check(text.length > 500, `${path} contains substantive content`, String(text.length))
+  if (path === '/llms.txt') check(!text.includes('https://www.cmacroofing.com/'), 'llms.txt avoids stale cross-host machine links')
 }
 
 const openapi = await request('/openapi.json')
@@ -125,6 +128,33 @@ const apiCatalogBody = await readJson(apiCatalog, 'RFC 9727 API catalog')
 check(apiCatalog.status === 200, 'RFC 9727 API catalog returns 200', String(apiCatalog.status))
 check((apiCatalog.headers.get('content-type') || '').includes('application/linkset+json'), 'API catalog uses the Linkset JSON media type')
 check(Array.isArray(apiCatalogBody?.linkset) && apiCatalogBody.linkset.length > 0, 'API catalog contains API links')
+check(Array.isArray(apiCatalogBody?.linkset?.[0]?.item) && apiCatalogBody.linkset[0].item.length >= 3, 'API catalog contains RFC 9727 item entries')
+
+const aiCatalog = await request('/.well-known/ai-catalog.json')
+const aiCatalogBody = await readJson(aiCatalog, 'Agentic Resource Discovery catalog')
+check(aiCatalog.status === 200, 'ARD catalog returns 200', String(aiCatalog.status))
+check(aiCatalogBody?.specVersion === '1.0' && aiCatalogBody?.entries?.length >= 3, 'ARD catalog describes API, MCP, and skill resources')
+
+const skillsIndex = await request('/.well-known/agent-skills/index.json')
+const skillsIndexBody = await readJson(skillsIndex, 'Agent Skills index')
+const skill = await request('/.well-known/agent-skills/cmac-site-research/SKILL.md')
+const skillBody = await skill.text()
+const skillDigest = `sha256:${createHash('sha256').update(skillBody).digest('hex')}`
+check(skillsIndex.status === 200 && skillsIndexBody?.$schema?.includes('/0.2.0/'), 'Agent Skills index declares v0.2.0')
+check(skill.status === 200 && (skill.headers.get('content-type') || '').includes('text/markdown'), 'Agent Skill is served as Markdown')
+check(skillsIndexBody?.skills?.[0]?.digest === skillDigest, 'Agent Skill digest verifies')
+
+const schemaMap = await request('/schemamap.xml')
+const schemaMapBody = await schemaMap.text()
+check(schemaMap.status === 200 && schemaMapBody.includes('/feeds/site.jsonl'), 'Schema Map indexes the site feed')
+const schemaFeed = await request('/feeds/site.jsonl')
+const schemaFeedBody = await schemaFeed.text()
+check(schemaFeed.status === 200 && schemaFeedBody.trim().split('\n').length === 65, 'Schema feed contains all public pages')
+check(schemaFeedBody.trim().split('\n').every((line) => JSON.parse(line)['@context'] === 'https://schema.org'), 'Schema feed contains valid JSON-LD lines')
+
+const robots = await request('/robots.txt')
+const robotsBody = await robots.text()
+check(robots.status === 200 && robotsBody.toLowerCase().includes('schemamap:'), 'robots.txt advertises the Schema Map')
 
 const apiNotFound = await request('/api/definitely-not-real')
 const apiNotFoundBody = await readJson(apiNotFound, 'unknown API route')
@@ -136,6 +166,23 @@ const search = await request('/search?q=roof+repair')
 check(search.status === 200, 'site search returns 200', String(search.status))
 check((await search.text()).toLowerCase().includes('roof repair'), 'site search renders content-index results')
 
+const pageApi = await request('/api/v1/pages?limit=2')
+const pageApiBody = await readJson(pageApi, 'versioned page catalog')
+check(pageApi.status === 200 && pageApiBody?.apiVersion === 'v1', 'versioned page catalog returns 200')
+check(pageApiBody?.items?.length === 2 && Boolean(pageApiBody?.pagination?.nextCursor), 'page catalog returns an opaque next cursor')
+const nextPageApi = await request(`/api/v1/pages?limit=2&cursor=${encodeURIComponent(pageApiBody?.pagination?.nextCursor ?? '')}`)
+const nextPageApiBody = await readJson(nextPageApi, 'second page of versioned catalog')
+check(nextPageApi.status === 200 && nextPageApiBody?.items?.[0]?.path !== pageApiBody?.items?.[0]?.path, 'page catalog cursor advances')
+
+const pageDetailApi = await request('/api/v1/page?path=/services/roofing')
+const pageDetailApiBody = await readJson(pageDetailApi, 'versioned page detail')
+check(pageDetailApi.status === 200 && pageDetailApiBody?.['@type'] === 'Service', 'versioned page detail returns structured content')
+
+const searchApi = await request('/api/v1/search?q=roof+repair&limit=2')
+const searchApiBody = await readJson(searchApi, 'versioned search API')
+check(searchApi.status === 200 && searchApiBody?.items?.length > 0, 'versioned search API returns results')
+check(Boolean(searchApiBody?.pagination) && searchApiBody?.query === 'roof repair', 'versioned search API returns pagination metadata')
+
 const askSuccess = await request('/ask', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
@@ -144,6 +191,18 @@ const askSuccess = await request('/ask', {
 const askSuccessBody = await readJson(askSuccess, 'NLWeb success request')
 check(askSuccess.status === 200 && askSuccessBody?._meta?.response_type === 'answer', 'NLWeb returns a typed answer')
 check(Array.isArray(askSuccessBody.results) && askSuccessBody.results.length > 0, 'NLWeb returns deterministic results')
+
+const askString = await request('/ask', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ query: 'roof repair Dallas' }),
+})
+const askStringBody = await readJson(askString, 'NLWeb string query')
+check(askString.status === 200 && askStringBody?._meta?.response_type === 'answer', 'NLWeb accepts the compact string query shape')
+
+const askGet = await request('/ask?query=roof+repair+Dallas')
+const askGetBody = await readJson(askGet, 'NLWeb GET query')
+check(askGet.status === 200 && askGetBody?._meta?.response_type === 'answer', 'NLWeb supports deterministic GET queries')
 
 const askFailure = await request('/ask', {
   method: 'POST',
@@ -200,7 +259,9 @@ check(mcpDiscoverBody?.result?.supportedVersions?.includes('2025-11-25'), 'MCP d
 const mcpCard = await request('/.well-known/mcp/server-card.json')
 const mcpCardBody = await readJson(mcpCard, 'MCP server card')
 check(mcpCard.status === 200, 'MCP server card returns 200', String(mcpCard.status))
-check(mcpCardBody?.remotes?.[0]?.url === `${base}/mcp`, 'MCP server card advertises the serving deployment origin')
+check(mcpCardBody?.remotes?.[0]?.url === `${base}/.well-known/mcp`, 'MCP server card advertises the well-known serving origin')
+check(mcpCardBody?.serverUrl === `${base}/.well-known/mcp`, 'MCP server card includes compatibility serverUrl')
+check(mcpCardBody?.tools?.length === 5, 'MCP server card previews all five tools')
 
 const invalidLead = await request('/api/lead', {
   method: 'POST',

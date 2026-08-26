@@ -446,7 +446,11 @@ function trustDoc(page: (typeof trustPages)[number]): PageDoc {
       heading: 'Developer discovery and retrieval',
       items: [
         { name: 'OpenAPI 3.1 description', summary: 'Typed contract for public retrieval operations.', path: '/openapi.json' },
+        { name: 'Versioned page API', summary: 'Cursor-paginated catalog of every published page.', path: '/api/v1/pages' },
+        { name: 'Versioned search API', summary: 'Deterministic public site search with cursor pagination.', path: '/api/v1/search?q=roof+repair' },
         { name: 'RFC 9727 API catalog', summary: 'Machine-readable API discovery links.', path: '/.well-known/api-catalog' },
+        { name: 'Agentic Resource Discovery catalog', summary: 'API, MCP, and skill resources in one catalog.', path: '/.well-known/ai-catalog.json' },
+        { name: 'Agent Skills index', summary: 'Integrity-pinned public research instructions.', path: '/.well-known/agent-skills/index.json' },
         { name: 'Scoped developer context', summary: 'Concise integration guidance for language models.', path: '/developers/llms.txt' },
         { name: 'NLWeb capability document', summary: 'Supported NLWeb 0.55 mode and request example.', path: '/ask' },
         { name: 'MCP server card', summary: 'Discover the public read-only Streamable HTTP server.', path: '/.well-known/mcp/server-card.json' },
@@ -615,7 +619,11 @@ export function validateContent(): void {
 
   const machinePaths = new Set([
     '/openapi.json',
+    '/api/v1/pages',
+    '/api/v1/search?q=roof+repair',
     '/.well-known/api-catalog',
+    '/.well-known/ai-catalog.json',
+    '/.well-known/agent-skills/index.json',
     '/developers/llms.txt',
     '/ask',
     '/.well-known/mcp/server-card.json',

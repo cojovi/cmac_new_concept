@@ -4,15 +4,15 @@ export function GET(request: Request) {
     {
       linkset: [
         {
-          anchor: `${origin}/agent`,
+          anchor: origin,
+          item: [
+            { href: `${origin}/openapi.json`, type: 'application/vnd.oai.openapi+json' },
+            { href: `${origin}/.well-known/mcp/server-card.json`, type: 'application/json' },
+            { href: `${origin}/.well-known/agent-skills/index.json`, type: 'application/json' },
+          ],
           'service-desc': [{ href: `${origin}/openapi.json`, type: 'application/vnd.oai.openapi+json' }],
           'service-doc': [{ href: `${origin}/developers`, type: 'text/html' }],
           'service-meta': [{ href: `${origin}/llms.txt`, type: 'text/plain' }],
-        },
-        {
-          anchor: `${origin}/ask`,
-          'service-desc': [{ href: `${origin}/openapi.json`, type: 'application/vnd.oai.openapi+json' }],
-          'service-doc': [{ href: `${origin}/developers`, type: 'text/html' }],
         },
       ],
     },
