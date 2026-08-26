@@ -158,6 +158,8 @@ check(schemaFeedBody.trim().split('\n').every((line) => JSON.parse(line)['@conte
 const robots = await request('/robots.txt')
 const robotsBody = await robots.text()
 check(robots.status === 200 && robotsBody.toLowerCase().includes('schemamap:'), 'robots.txt advertises the Schema Map')
+check(['GPTBot', 'OAI-SearchBot', 'ClaudeBot', 'PerplexityBot'].every((crawler) => robotsBody.includes(`User-agent: ${crawler}`)), 'robots.txt explicitly allows answer-engine crawlers')
+check(['CCBot', 'Bytespider'].every((crawler) => robotsBody.includes(`User-agent: ${crawler}`)), 'robots.txt distinguishes training-only crawlers')
 
 const apiNotFound = await request('/api/definitely-not-real')
 const apiNotFoundBody = await readJson(apiNotFound, 'unknown API route')

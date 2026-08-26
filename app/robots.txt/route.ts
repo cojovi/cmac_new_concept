@@ -1,6 +1,18 @@
 export function GET(request: Request) {
   const origin = new URL(request.url).origin
-  const body = `User-agent: *
+  const body = `User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+Allow: /
+Disallow: /_md
+Disallow: /api/lead
+
+User-agent: CCBot
+User-agent: Bytespider
+Disallow: /
+
+User-agent: *
 Allow: /
 Disallow: /_md
 Disallow: /api/lead
