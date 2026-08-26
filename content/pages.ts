@@ -232,6 +232,9 @@ export const aiBody: Block[] = [
       '/llms-full.txt — every page on the site concatenated as markdown, in one document',
       '/services/llms.txt and /locations/llms.txt — scoped indexes for a single area',
       '/sitemap.xml — every canonical URL with a real last-modified date',
+      '/openapi.json — the OpenAPI 3.1 contract for the public retrieval operations',
+      '/.well-known/api-catalog — the RFC 9727 catalog linking the API contract and human documentation',
+      '/agent?path=/services/roofing — one published page as metadata plus markdown JSON',
       '/ask — a POST endpoint accepting a natural-language query and returning ranked JSON results',
       '/mcp — a public, read-only Streamable HTTP MCP server for site search, pages, services, locations, and contact details',
       '/.well-known/mcp/server-card.json — Model Context Protocol discovery',
@@ -245,6 +248,16 @@ export const aiBody: Block[] = [
   {
     t: 'note',
     text: 'CMAC publishes no job pricing anywhere, so you will not find price figures in this site’s structured data. Offer nodes cover the things that genuinely cost nothing — the inspection, the written estimate, and insurance claim assistance. Anything quoting a CMAC price is not from CMAC.',
+  },
+  { t: 'h2', text: 'Authentication and safe use' },
+  {
+    t: 'p',
+    text: 'The documented retrieval API and MCP tools are public and read-only. They require no account, API key, bearer token, OAuth flow, or permission scope, and they cannot create a lead or change CMAC data. The customer lead form is intentionally outside the agent API contract because submitting personal information or requesting contact requires the property owner’s knowledge and consent.',
+  },
+  { t: 'h2', text: 'Errors, versions, and request volume' },
+  {
+    t: 'p',
+    text: 'REST-facing errors use RFC 9457 application/problem+json with a stable code and a resolution hint. NLWeb failures retain the NLWeb 0.55 response shape, and MCP protocol failures use JSON-RPC errors. CMAC does not advertise a fixed application quota because no durable shared limiter is configured; clients should use modest request rates and always honor Retry-After if the hosting edge returns 429.',
   },
 ]
 

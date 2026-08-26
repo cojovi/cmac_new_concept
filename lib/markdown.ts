@@ -83,6 +83,13 @@ function sectionToMarkdown(section: Section): string {
 export function pageDocToMarkdown(doc: PageDoc): string {
   const sources = 'sourceUrls' in doc && Array.isArray(doc.sourceUrls) ? (doc.sourceUrls as string[]) : []
   const lines = [
+    '---',
+    `title: ${JSON.stringify(doc.h1)}`,
+    `description: ${JSON.stringify(doc.description)}`,
+    `canonical: ${JSON.stringify(abs(doc.path))}`,
+    `last-modified: ${JSON.stringify(doc.updated)}`,
+    '---',
+    '',
     `# ${doc.h1}`,
     '',
     `> ${doc.description}`,

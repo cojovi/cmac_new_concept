@@ -4,10 +4,36 @@
 > resume cleanly after any interruption. Full approved plan lives at
 > `~/.claude/plans/volumes-fastssd-github-my-repos-cmac-ne-vast-falcon.md`.
 
-**Last updated:** 2026-08-25 (full rebuild committed to `experimental` and pushed)
-**Current phase:** ✅ Rebuild, 34-route service imagery, and shared subpage structure complete; authenticated preview verified
+**Last updated:** 2026-08-25 (agent-readiness hardening verified locally; production deployment pending)
+**Current phase:** ✅ Rebuild, imagery, 65-route content system, and agent/developer interfaces complete
 **Resume here:** Add `RESEND_API_KEY` and `LEAD_FROM_EMAIL` to the Vercel Preview environment when ready,
 then confirm one real lead delivery. Resend credentials remain intentionally deferred by the owner.
+
+### Agent-readiness correction (2026-08-25)
+
+- The reported **39/100** scan targeted the old protected preview at
+  `cmac-new-concept-k1j5utyfc-cojovis-projects.vercel.app`. Direct probes confirmed every route returned
+  a `302` to Vercel SSO, so its soft-404, 239-character HTML, missing JSON-LD, missing trust pages, and
+  failed Markdown findings describe the login shell rather than the rebuilt site.
+- A fresh scan of the public production alias, `cmac-new-concept.vercel.app`, scored **95/100** before
+  this hardening pass. It verified the real 404, SSR content, JSON-LD, sitemap, trust pages, llms.txt,
+  Markdown negotiation, and other existing surfaces.
+- Added a real `/developers` portal, `/developers/llms.txt`, OpenAPI 3.1.1 at `/openapi.json`, and an
+  RFC 9727 Linkset API catalog at `/.well-known/api-catalog`. The OpenAPI contract explicitly declares
+  the retrieval operations public and read-only; it does not invent OAuth, credentials, or write scopes.
+- REST-facing errors now use RFC 9457 `application/problem+json` with stable codes and resolution hints,
+  including an `/api/*` recovery route. NLWeb and MCP retain their own required failure envelopes.
+- Fixed MCP discovery cards to advertise the origin serving the card. The earlier Vercel card pointed to
+  the still-live Wix domain, where `/mcp` returns 403. The server now supports both the current stateless
+  MCP `2026-07-28` `server/discover` flow and the established `2025-11-25` initialize handshake.
+- Markdown negotiation now honors `Accept` q-values, treats `q=0` as rejection, returns 406 when neither
+  HTML nor Markdown is acceptable, and advertises page-level Markdown alternates with metadata frontmatter.
+- Local verification passes: lint, typecheck, production build, OpenAPI validation, 584 checks across 65
+  public routes, all 261 legacy records, both MCP eras, and 32 responsive/axe screenshots with no overflow
+  or serious/critical accessibility findings.
+- Remaining scan limitations are external: the Vercel alias causes the scanner to search for “Vercel”
+  developer resources, and CMAC brand discoverability depends on the eventual custom-domain cutover,
+  indexing, consistent NAP listings, and third-party links.
 
 ### Git note (2026-08-25)
 
@@ -59,8 +85,8 @@ then confirm one real lead delivery. Resend credentials remain intentionally def
 - **Authenticated preview:** https://cmac-new-concept-k1j5utyfc-cojovis-projects.vercel.app
 - **is-agentic:** **95/100**, “Strong technical baseline” —
   https://is-agentic.com/scan/cmac-new-concept-eoqjsteiv-cojovis-projects.vercel.app
-- **Inventory:** 64 public documents = 2 bespoke marketing pages + 34 services + 12 locations +
-  16 trust/company pages. All 64 also have markdown twins.
+- **Inventory:** 65 public documents = 2 bespoke marketing pages + 34 services + 12 locations +
+  17 trust/company/developer pages. All 65 also have markdown twins.
 - **Verification:** lint, typecheck, production build, content validation, 549-route acceptance checks,
   redirect validation, keyboard/axe/responsive screenshots, Lighthouse, mocked Resend delivery, NLWeb,
   MCP, Markdown negotiation, and protected-preview smoke tests pass.
@@ -179,7 +205,7 @@ The concept homepage contains placeholder content that reads as real. All of it 
 
 ---
 
-## 5. Page inventory (64)
+## 5. Page inventory (65)
 
 Legend: ⬜ not started · 🟡 in progress · ✅ done
 
@@ -242,11 +268,11 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 - ✅ `/locations/arkansas`
 - ✅ `/locations/georgia` · `/locations/georgia/atlanta`
 
-### Company & trust (16)
+### Company, trust & developer resources (17)
 - ✅ `/about` · `/contact` · `/quote` · `/reviews` · `/faqs`
 - ✅ `/warranty` · `/register-my-roof` · `/insurance-claims` · `/storm-response` · `/pricing`
 - ✅ `/partners` (Join The Vision — subcontractor recruitment, *not* careers)
-- ✅ `/privacy-policy` · `/terms` · `/accessibility` · `/sitemap-page` · `/ai`
+- ✅ `/privacy-policy` · `/terms` · `/accessibility` · `/sitemap-page` · `/ai` · `/developers`
 
 ### Machine surfaces
 - ✅ `/llms.txt` · `/llms-full.txt` · `/services/llms.txt` · `/locations/llms.txt`
@@ -262,7 +288,7 @@ Legend: ⬜ not started · 🟡 in progress · ✅ done
 |---|---|---|
 | **0** | PROGRESS.md, decisions log | ✅ done |
 | **1** | Next 16 scaffold · `globals.css` · home + Mini-Homes ported · `MobileNavToggle` · `next/font` · router removed | ✅ done |
-| **2** | `content/` data layer · section components · `PageShell` · 8 templates · all 64 pages | ✅ done |
+| **2** | `content/` data layer · section components · `PageShell` · 8 templates · all 65 pages | ✅ done |
 | **3** | proxy · `/_md` · not-found · sitemap/robots · llms.txt family · JSON-LD · `/ask` · `.well-known` · 301s | ✅ done |
 | **4** | asset purge · AVIF/WebP · preloads · focus rings · breakpoints · type floor · Resend forms | ✅ done |
 | **5** | production cutover: DNS, GSC sitemap | ➖ intentionally out of scope |

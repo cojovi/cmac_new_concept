@@ -20,7 +20,13 @@ const nextConfig: NextConfig = {
       {
         // HTML and markdown are alternate representations of the same public URL.
         source: '/:path*',
-        headers: [{ key: 'Vary', value: 'Accept, Accept-Encoding' }],
+        headers: [
+          { key: 'Vary', value: 'Accept, Accept-Encoding' },
+          {
+            key: 'Link',
+            value: '</.well-known/api-catalog>; rel="api-catalog", </openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json", </developers>; rel="service-doc"; type="text/html", </llms.txt>; rel="alternate"; type="text/plain", </sitemap.xml>; rel="sitemap"; type="application/xml"',
+          },
+        ],
       },
       {
         // Machine-readable surfaces are safe to cache hard at the edge.

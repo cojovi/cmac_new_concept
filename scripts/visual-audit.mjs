@@ -21,6 +21,7 @@ const templates = [
   '/services/roofing/roof-repairs',
   '/locations/texas/dallas-fort-worth',
   '/about',
+  '/developers',
   '/quote',
 ]
 const serviceRoutes = [

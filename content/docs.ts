@@ -440,6 +440,20 @@ function trustDoc(page: (typeof trustPages)[number]): PageDoc {
       ],
     })
   }
+  if (page.developerResources) {
+    sections.push({
+      k: 'links',
+      heading: 'Developer discovery and retrieval',
+      items: [
+        { name: 'OpenAPI 3.1 description', summary: 'Typed contract for public retrieval operations.', path: '/openapi.json' },
+        { name: 'RFC 9727 API catalog', summary: 'Machine-readable API discovery links.', path: '/.well-known/api-catalog' },
+        { name: 'Scoped developer context', summary: 'Concise integration guidance for language models.', path: '/developers/llms.txt' },
+        { name: 'NLWeb capability document', summary: 'Supported NLWeb 0.55 mode and request example.', path: '/ask' },
+        { name: 'MCP server card', summary: 'Discover the public read-only Streamable HTTP server.', path: '/.well-known/mcp/server-card.json' },
+        { name: 'Agent page representation', summary: 'Retrieve the roofing service page as structured JSON.', path: '/agent?path=/services/roofing' },
+      ],
+    })
+  }
   if (page.slug === 'sitemap-page') {
     sections.push(
       { k: 'links', heading: 'Services', items: serviceDocs.map((doc) => ({ name: doc.h1, path: doc.path })) },
@@ -464,7 +478,7 @@ function trustDoc(page: (typeof trustPages)[number]): PageDoc {
   return {
     path: page.path,
     template: 'trust',
-    sourceUrls: page.slug === 'reviews' ? [aggregateRating.sourceUrl] : [trustSource(page.path)],
+    sourceUrls: page.sourceUrls ?? (page.slug === 'reviews' ? [aggregateRating.sourceUrl] : [trustSource(page.path)]),
     title: page.title,
     h1: page.h1,
     description: page.description,
@@ -594,10 +608,19 @@ export function validateContent(): void {
   const paths = allPaths()
   const pathSet = new Set(paths)
   if (pathSet.size !== paths.length) errors.push('Duplicate public paths found')
-  if (docs.length !== 64) errors.push(`Expected 64 public documents; found ${docs.length}`)
+  if (docs.length !== 65) errors.push(`Expected 65 public documents; found ${docs.length}`)
   if (serviceDocs.length !== 34) errors.push(`Expected 34 service documents; found ${serviceDocs.length}`)
   if (locationDocs.length !== 12) errors.push(`Expected 12 location documents; found ${locationDocs.length}`)
-  if (companyDocs.length !== 16) errors.push(`Expected 16 trust documents; found ${companyDocs.length}`)
+  if (companyDocs.length !== 17) errors.push(`Expected 17 trust documents; found ${companyDocs.length}`)
+
+  const machinePaths = new Set([
+    '/openapi.json',
+    '/.well-known/api-catalog',
+    '/developers/llms.txt',
+    '/ask',
+    '/.well-known/mcp/server-card.json',
+    '/agent?path=/services/roofing',
+  ])
 
   for (const doc of docs) {
     if (!doc.sourceUrls.length || doc.sourceUrls.some((url) => !URL.canParse(url))) {
@@ -608,7 +631,9 @@ export function validateContent(): void {
     }
     for (const section of doc.sections) {
       if (section.k === 'links' || section.k === 'serviceGrid') {
-        for (const item of section.items) if (!pathSet.has(item.path)) errors.push(`${doc.path}: dangling link ${item.path}`)
+        for (const item of section.items) {
+          if (!pathSet.has(item.path) && !machinePaths.has(item.path)) errors.push(`${doc.path}: dangling link ${item.path}`)
+        }
       }
     }
   }

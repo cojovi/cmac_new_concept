@@ -1,6 +1,7 @@
 import { docByPath } from '@/content/docs'
 import { pageDocToMarkdown } from '@/lib/markdown'
 import { abs } from '@/lib/site'
+import { problem } from '@/lib/problem'
 import { headers } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
@@ -11,14 +12,16 @@ export async function GET(request: Request) {
   const doc = docByPath(path)
 
   if (!doc) {
-    return Response.json(
-      {
-        error: 'PAGE_NOT_FOUND',
-        message: 'No published CMAC page exists at that path.',
-        discovery: { llms: abs('/llms.txt'), sitemap: abs('/sitemap.xml') },
-      },
-      { status: 404, headers: { 'X-Robots-Tag': 'noindex, follow' } },
-    )
+    const origin = new URL(request.url).origin
+    return problem({
+      title: 'Published page not found',
+      status: 404,
+      detail: 'No published CMAC page exists at that path.',
+      instance: request.url,
+      code: 'PAGE_NOT_FOUND',
+      resolution: `Use ${origin}/llms.txt or ${origin}/sitemap.xml to find a published path.`,
+      headers: { 'X-Robots-Tag': 'noindex, follow' },
+    })
   }
 
   return Response.json(

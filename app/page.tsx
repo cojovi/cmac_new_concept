@@ -32,7 +32,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Veteran-Owned Roofing, Gutters, Doors & Restoration',
   description: org.description,
-  alternates: { canonical: '/' },
+  alternates: { canonical: '/', types: { 'text/markdown': '/.md' } },
 }
 
 const trustBadges = [

@@ -31,6 +31,10 @@ export interface TrustPage {
   form?: boolean
   formVariant?: FormVariant
   credentials?: boolean
+  /** Add linked machine-readable integration resources to the page. */
+  developerResources?: boolean
+  /** Standards or first-party records used to substantiate authored documentation. */
+  sourceUrls?: string[]
   updated: string
   priority?: number
 }
@@ -158,6 +162,25 @@ export const trustPages: TrustPage[] = [
       'Markdown twins of every page, llms.txt indexes, a natural-language /ask endpoint, read-only MCP discovery, and full JSON-LD structured data. How to read cmacroofing.com programmatically.',
     body: aiBody,
     updated: '2026-08-24',
+    priority: 0.6,
+  },
+  {
+    path: '/developers',
+    slug: 'developers',
+    title: 'Developer & AI Agent Documentation | CMAC Roofing',
+    h1: 'CMAC Developer & Agent Resources',
+    sub: 'Public, read-only access to CMAC’s published knowledge.',
+    description:
+      'OpenAPI, NLWeb, Markdown, JSON page retrieval, and MCP documentation for accessing CMAC Roofing public services, locations, and contact information.',
+    body: aiBody,
+    developerResources: true,
+    sourceUrls: [
+      'https://spec.openapis.org/oas/v3.1.1.html',
+      'https://www.rfc-editor.org/rfc/rfc9727.html',
+      'https://nlweb.ai/docs/specification',
+      'https://modelcontextprotocol.io/specification/2025-11-25/basic/transports',
+    ],
+    updated: '2026-08-25',
     priority: 0.6,
   },
   {

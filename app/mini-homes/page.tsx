@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   title: 'CMAC Mini-Homes | Texas-Built Modular Container Spaces',
   description:
     'Explore CMAC container-built mini-homes, workforce housing, offices, and flexible spaces made in Texas and delivered turn-key.',
-  alternates: { canonical: '/mini-homes' },
+  alternates: { canonical: '/mini-homes', types: { 'text/markdown': '/mini-homes.md' } },
 }
 
 const trustBadges = [

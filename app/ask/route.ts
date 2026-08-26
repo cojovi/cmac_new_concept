@@ -1,4 +1,5 @@
 import { searchDocs } from '@/lib/search'
+import { problem } from '@/lib/problem'
 
 const VERSION = '0.55'
 const RESPONSE_FORMAT = 'conversational_search'
@@ -80,4 +81,25 @@ export function GET() {
     },
     { headers: { Allow: 'POST' } },
   )
+}
+
+function methodNotAllowed(request: Request) {
+  const url = new URL(request.url)
+  return problem({
+    title: 'Method not allowed',
+    status: 405,
+    detail: 'The NLWeb endpoint supports GET for capabilities and POST for deterministic search.',
+    instance: request.url,
+    code: 'METHOD_NOT_ALLOWED',
+    resolution: `Read ${url.origin}/developers and send a GET or POST request.`,
+    headers: { Allow: 'GET, POST, OPTIONS' },
+  })
+}
+
+export const PUT = methodNotAllowed
+export const PATCH = methodNotAllowed
+export const DELETE = methodNotAllowed
+
+export function OPTIONS() {
+  return new Response(null, { status: 204, headers: { Allow: 'GET, POST, OPTIONS' } })
 }

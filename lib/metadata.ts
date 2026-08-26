@@ -11,7 +11,7 @@ export function metaFrom(doc: PageDoc): Metadata {
   return {
     title,
     description: doc.description,
-    alternates: { canonical: doc.path },
+    alternates: { canonical: doc.path, types: { 'text/markdown': doc.path === '/' ? '/.md' : `${doc.path}.md` } },
     robots: { index, follow },
     openGraph: {
       type: 'website',

@@ -29,7 +29,7 @@ const resourceLinks = [
   { label: 'Get a Free Quote', href: '/quote' },
   { label: 'Contact', href: '/contact' },
   { label: 'Site Index', href: '/sitemap-page' },
-  { label: 'For AI Agents', href: '/ai' },
+  { label: 'AI & Developer Docs', href: '/developers' },
 ]
 
 export function SiteFooter() {

@@ -2,9 +2,16 @@ import { allDocs, docByPath } from '@/content/docs'
 import type { PageDoc } from '@/content/types'
 import { pageDocToMarkdown } from '@/lib/markdown'
 import { searchDocs } from '@/lib/search'
-import { abs } from '@/lib/site'
+import { SITE_URL, abs } from '@/lib/site'
 
 export const MCP_PROTOCOL_VERSION = '2025-11-25'
+export const MCP_MODERN_PROTOCOL_VERSION = '2026-07-28'
+export const MCP_SUPPORTED_PROTOCOL_VERSIONS = [
+  MCP_MODERN_PROTOCOL_VERSION,
+  MCP_PROTOCOL_VERSION,
+  '2025-06-18',
+  '2025-03-26',
+] as const
 export const MCP_SERVER_INFO = { name: 'com.cmacroofing.website', title: 'CMAC Roofing Website', version: '1.0.0' }
 
 const readOnlyAnnotations = {
@@ -171,15 +178,15 @@ export function callMcpTool(name: string, args: Record<string, unknown>) {
   }
 }
 
-export function mcpServerCard() {
+export function mcpServerCard(origin = SITE_URL) {
   return {
     $schema: 'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
     name: `${MCP_SERVER_INFO.name}/mcp`,
     version: MCP_SERVER_INFO.version,
     title: MCP_SERVER_INFO.title,
     description: 'Public, read-only access to CMAC Roofing services, locations, pages, and contact information.',
-    websiteUrl: abs('/ai'),
-    documentationUrl: abs('/ai'),
-    remotes: [{ type: 'streamable-http', url: abs('/mcp') }],
+    websiteUrl: `${origin}/developers`,
+    documentationUrl: `${origin}/developers`,
+    remotes: [{ type: 'streamable-http', url: `${origin}/mcp` }],
   }
 }
