@@ -11,6 +11,7 @@ export const MCP_SUPPORTED_PROTOCOL_VERSIONS = [
   MCP_PROTOCOL_VERSION,
   '2025-06-18',
   '2025-03-26',
+  '2024-11-05',
 ] as const
 export const MCP_SERVER_INFO = { name: 'com.cmacroofing.website', title: 'CMAC Roofing Website', version: '1.0.0' }
 
@@ -179,7 +180,7 @@ export function callMcpTool(name: string, args: Record<string, unknown>) {
 }
 
 export function mcpServerCard(origin = SITE_URL) {
-  const serverUrl = `${origin}/.well-known/mcp`
+  const serverUrl = `${origin}/mcp`
   return {
     $schema: 'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
     name: `${MCP_SERVER_INFO.name}/mcp`,
@@ -188,9 +189,9 @@ export function mcpServerCard(origin = SITE_URL) {
     description: 'Public, read-only access to CMAC Roofing services, locations, pages, and contact information.',
     websiteUrl: `${origin}/developers`,
     documentationUrl: `${origin}/developers`,
+    icons: [{ src: `${origin}/favicon.png`, mimeType: 'image/png', sizes: ['192x192'] }],
     remotes: [
-      { type: 'streamable-http', url: serverUrl },
-      { type: 'streamable-http', url: `${origin}/mcp` },
+      { type: 'streamable-http', url: serverUrl, supportedProtocolVersions: [...MCP_SUPPORTED_PROTOCOL_VERSIONS] },
     ],
     // Compatibility fields used by pre-registry discovery clients. The
     // canonical registry schema uses `remotes`; both point at the same server.

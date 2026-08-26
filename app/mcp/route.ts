@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       return jsonRpc(id, {
         supportedVersions: [...MCP_SUPPORTED_PROTOCOL_VERSIONS],
         capabilities: { tools: {} },
-        serverInfo: MCP_SERVER_INFO,
+        _meta: { 'io.modelcontextprotocol/serverInfo': MCP_SERVER_INFO },
         instructions: 'Use these public, read-only tools for CMAC services, locations, contact details, and published content.',
         ttlMs: 300_000,
         cacheScope: 'public',

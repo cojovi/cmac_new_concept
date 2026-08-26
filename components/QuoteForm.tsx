@@ -55,7 +55,18 @@ export function QuoteForm({
   }
 
   return (
-    <form id={id} className="inspection-card" action="/api/lead" method="post" onSubmit={onSubmit}>
+    <form
+      id={id}
+      className="inspection-card"
+      action="/api/lead"
+      method="post"
+      onSubmit={onSubmit}
+      {...{
+        toolname: 'request_cmac_inspection',
+        tooldescription:
+          'Prepare a CMAC property inspection request for the user to review and submit. This shares contact and property details and requires explicit consent.',
+      }}
+    >
       <h2>{title}</h2>
       <p>{subtitle}</p>
       <input type="hidden" name="formKind" value={formKind} />

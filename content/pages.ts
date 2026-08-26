@@ -233,6 +233,8 @@ export const aiBody: Block[] = [
       '/services/llms.txt and /locations/llms.txt — scoped indexes for a single area',
       '/sitemap.xml — every canonical URL with a real last-modified date',
       '/openapi.json — the OpenAPI 3.1 contract for the public retrieval operations',
+      '/api — machine-readable discovery for the current public API version, contract, and documentation',
+      '/api/v1 — machine-readable index of every public v1 operation',
       '/api/v1/pages — cursor-paginated catalog of every public content page',
       '/api/v1/page?path=/services/roofing — one public page as metadata plus markdown JSON',
       '/api/v1/search?q=roof+repair — cursor-paginated deterministic site search',
@@ -264,7 +266,7 @@ export const aiBody: Block[] = [
   { t: 'h2', text: 'Errors, versions, and request volume' },
   {
     t: 'p',
-    text: 'REST-facing errors use RFC 9457 application/problem+json with a stable code and a resolution hint. NLWeb failures retain the NLWeb 0.55 response shape, and MCP protocol failures use JSON-RPC errors. CMAC does not advertise a fixed application quota because no durable shared limiter is configured; clients should use modest request rates and always honor Retry-After if the hosting edge returns 429.',
+    text: 'REST-facing errors use RFC 9457 application/problem+json with a stable code and a resolution hint. Backward-compatible fields may be added within v1; breaking changes use a new major path. Before removing a stable version, CMAC will publish migration guidance and send Deprecation and Link headers, then announce a dated Sunset at least 180 days in advance. No v1 operation is currently deprecated. NLWeb failures retain the NLWeb 0.55 response shape, and MCP protocol failures use JSON-RPC errors. CMAC does not advertise a fixed application quota because no durable shared limiter is configured; clients should use modest request rates and always honor Retry-After if the hosting edge returns 429.',
   },
 ]
 

@@ -54,12 +54,56 @@ export function openApiDocument(origin: string) {
     servers: [{ url: origin, description: 'The CMAC deployment that served this description' }],
     externalDocs: { description: 'CMAC developer and agent documentation', url: `${origin}/developers` },
     security: [],
+    'x-api-versioning-policy': {
+      current: 'v1',
+      compatibility: 'Backward-compatible fields may be added within v1. Breaking request or response changes use a new major path.',
+      deprecation:
+        'Before a stable version is removed, CMAC will document migration guidance and send Deprecation and Link headers. A dated Sunset header will be announced at least 180 days before removal.',
+    },
     tags: [
       { name: 'Catalog', description: 'Enumerate public CMAC pages with cursor-based pagination.' },
       { name: 'Content', description: 'Read one published CMAC page in a structured representation.' },
       { name: 'Search', description: 'Search the same public PageDoc index used by the website.' },
     ],
     paths: {
+      '/api': {
+        get: {
+          operationId: 'discoverCmacPublicApi',
+          summary: 'Discover the public retrieval API',
+          description: 'Returns the current major version and links to the OpenAPI contract and developer documentation.',
+          security: [],
+          tags: ['Catalog'],
+          responses: {
+            '200': {
+              description: 'API discovery document',
+              content: { 'application/json': { schema: { type: 'object', additionalProperties: true } } },
+            },
+            '406': {
+              description: 'Requested representation is not available',
+              content: { 'application/problem+json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+            },
+          },
+        },
+      },
+      '/api/v1': {
+        get: {
+          operationId: 'discoverCmacPublicApiV1',
+          summary: 'Discover v1 retrieval operations',
+          description: 'Returns machine-readable links to every public, read-only v1 operation.',
+          security: [],
+          tags: ['Catalog'],
+          responses: {
+            '200': {
+              description: 'Versioned API operation index',
+              content: { 'application/json': { schema: { type: 'object', additionalProperties: true } } },
+            },
+            '406': {
+              description: 'Requested representation is not available',
+              content: { 'application/problem+json': { schema: { $ref: '#/components/schemas/ProblemDetails' } } },
+            },
+          },
+        },
+      },
       '/api/v1/pages': {
         get: {
           operationId: 'listCmacPublishedPages',

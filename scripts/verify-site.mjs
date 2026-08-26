@@ -134,6 +134,9 @@ const aiCatalog = await request('/.well-known/ai-catalog.json')
 const aiCatalogBody = await readJson(aiCatalog, 'Agentic Resource Discovery catalog')
 check(aiCatalog.status === 200, 'ARD catalog returns 200', String(aiCatalog.status))
 check(aiCatalogBody?.specVersion === '1.0' && aiCatalogBody?.entries?.length >= 3, 'ARD catalog describes API, MCP, and skill resources')
+check((aiCatalog.headers.get('content-type') || '').includes('application/ai-catalog+json'), 'ARD catalog uses its registered media type')
+check(aiCatalogBody?.entries?.every((entry) => entry.identifier?.startsWith(`urn:air:${new URL(base).hostname}:`)), 'ARD entries use domain-anchored urn:air identifiers')
+check(aiCatalogBody?.entries?.every((entry) => entry.trustManifest?.identity === entry.identifier), 'ARD entries bind trust identity to their identifiers')
 
 const skillsIndex = await request('/.well-known/agent-skills/index.json')
 const skillsIndexBody = await readJson(skillsIndex, 'Agent Skills index')
@@ -161,6 +164,15 @@ const apiNotFoundBody = await readJson(apiNotFound, 'unknown API route')
 check(apiNotFound.status === 404, 'unknown API paths return 404', String(apiNotFound.status))
 check((apiNotFound.headers.get('content-type') || '').includes('application/problem+json'), 'unknown API paths use RFC 9457 problem JSON')
 check(Boolean(apiNotFoundBody?.code && apiNotFoundBody?.resolution), 'API problems include code and resolution')
+
+const apiRoot = await request('/api')
+const apiRootBody = await readJson(apiRoot, 'API discovery root')
+check(apiRoot.status === 200 && apiRootBody?.apiVersion === 'v1', 'API root advertises the current major version')
+check(apiRootBody?.authentication?.required === false && apiRootBody?.readOnly === true, 'API root declares its public read-only posture')
+
+const apiV1 = await request('/api/v1')
+const apiV1Body = await readJson(apiV1, 'versioned API index')
+check(apiV1.status === 200 && apiV1Body?.operations?.length === 3, 'versioned API index lists all retrieval operations')
 
 const search = await request('/search?q=roof+repair')
 check(search.status === 200, 'site search returns 200', String(search.status))
@@ -259,9 +271,24 @@ check(mcpDiscoverBody?.result?.supportedVersions?.includes('2025-11-25'), 'MCP d
 const mcpCard = await request('/.well-known/mcp/server-card.json')
 const mcpCardBody = await readJson(mcpCard, 'MCP server card')
 check(mcpCard.status === 200, 'MCP server card returns 200', String(mcpCard.status))
-check(mcpCardBody?.remotes?.[0]?.url === `${base}/.well-known/mcp`, 'MCP server card advertises the well-known serving origin')
-check(mcpCardBody?.serverUrl === `${base}/.well-known/mcp`, 'MCP server card includes compatibility serverUrl')
+check((mcpCard.headers.get('content-type') || '').includes('application/mcp-server-card+json'), 'MCP server card uses its registered media type')
+check(mcpCardBody?.remotes?.[0]?.url === `${base}/mcp`, 'MCP server card advertises the live transport')
+check(mcpCardBody?.serverUrl === `${base}/mcp`, 'MCP server card includes compatibility serverUrl')
+check(mcpCardBody?.remotes?.[0]?.supportedProtocolVersions?.includes('2024-11-05'), 'MCP server card advertises legacy client compatibility')
 check(mcpCardBody?.tools?.length === 5, 'MCP server card previews all five tools')
+
+const mcpLegacyInitialize = await request('/mcp', {
+  method: 'POST',
+  headers: { ...mcpHeaders, 'MCP-Protocol-Version': '2024-11-05' },
+  body: JSON.stringify({
+    jsonrpc: '2.0',
+    id: 4,
+    method: 'initialize',
+    params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'legacy-verifier', version: '1.0.0' } },
+  }),
+})
+const mcpLegacyInitializeBody = await readJson(mcpLegacyInitialize, 'legacy MCP initialize')
+check(mcpLegacyInitialize.status === 200 && mcpLegacyInitializeBody?.result?.protocolVersion === '2024-11-05', 'MCP negotiates the 2024-11-05 protocol')
 
 const invalidLead = await request('/api/lead', {
   method: 'POST',
