@@ -4,7 +4,7 @@
 > resume cleanly after any interruption. Full approved plan lives at
 > `~/.claude/plans/volumes-fastssd-github-my-repos-cmac-ne-vast-falcon.md`.
 
-**Last updated:** 2026-08-25 (agent-readiness hardening verified locally; production deployment pending)
+**Last updated:** 2026-08-25 (agent-readiness hardening deployed and independently rescanned)
 **Current phase:** ✅ Rebuild, imagery, 65-route content system, and agent/developer interfaces complete
 **Resume here:** Add `RESEND_API_KEY` and `LEAD_FROM_EMAIL` to the Vercel Preview environment when ready,
 then confirm one real lead delivery. Resend credentials remain intentionally deferred by the owner.
@@ -15,25 +15,35 @@ then confirm one real lead delivery. Resend credentials remain intentionally def
   `cmac-new-concept-k1j5utyfc-cojovis-projects.vercel.app`. Direct probes confirmed every route returned
   a `302` to Vercel SSO, so its soft-404, 239-character HTML, missing JSON-LD, missing trust pages, and
   failed Markdown findings describe the login shell rather than the rebuilt site.
-- A fresh scan of the public production alias, `cmac-new-concept.vercel.app`, scored **95/100** before
-  this hardening pass. It verified the real 404, SSR content, JSON-LD, sitemap, trust pages, llms.txt,
-  Markdown negotiation, and other existing surfaces.
-- Added a real `/developers` portal, `/developers/llms.txt`, OpenAPI 3.1.1 at `/openapi.json`, and an
-  RFC 9727 Linkset API catalog at `/.well-known/api-catalog`. The OpenAPI contract explicitly declares
-  the retrieval operations public and read-only; it does not invent OAuth, credentials, or write scopes.
+- The scanner's current 104-check model now scores the public production alias,
+  `cmac-new-concept.vercel.app`, **75/100 (grade B)** in a forced uncached scan. The same model scored the
+  first hardening pass 59, then 66, before this final pass. The public report API still returns a cached
+  95 from the scanner's older, smaller model; the 75 is the reproducible current-model result generated
+  at `2026-08-26T03:43:15.988Z`.
+- Added a real `/developers` portal, `/developers/llms.txt`, OpenAPI 3.1.1 at `/openapi.json`, an RFC 9727
+  Linkset API catalog, machine-readable `/api` and `/api/v1` roots, and three versioned retrieval
+  operations. The final scanner awards the public API **7/7**. The contract explicitly declares the
+  operations public and read-only; it does not invent OAuth, credentials, or write scopes.
 - REST-facing errors now use RFC 9457 `application/problem+json` with stable codes and resolution hints,
   including an `/api/*` recovery route. NLWeb and MCP retain their own required failure envelopes.
-- Fixed MCP discovery cards to advertise the origin serving the card. The earlier Vercel card pointed to
-  the still-live Wix domain, where `/mcp` returns 403. The server now supports both the current stateless
-  MCP `2026-07-28` `server/discover` flow and the established `2025-11-25` initialize handshake.
+- Fixed MCP discovery cards to advertise the live `/mcp` transport, its media type, current discovery
+  flow, and compatibility back through `2024-11-05`. The server passes an end-to-end connection using
+  the official MCP TypeScript SDK and lists all five required read-only tools. The scanner now passes
+  well-known discovery, server card, tool descriptions, and parameter schemas; its handshake check only
+  sends GET (which correctly receives 405 from a stateless Streamable HTTP server) rather than POST.
+- Added a valid ARD 1.0 catalog with three domain-anchored `urn:air` entries and identity-bound trust
+  manifests, an integrity-pinned Agent Skills index, an NLWeb Schema Map/feed, explicit answer-engine
+  crawler policy, and declarative WebMCP on the consent-controlled homepage inspection form. All pass.
 - Markdown negotiation now honors `Accept` q-values, treats `q=0` as rejection, returns 406 when neither
   HTML nor Markdown is acceptable, and advertises page-level Markdown alternates with metadata frontmatter.
-- Local verification passes: lint, typecheck, production build, OpenAPI validation, 584 checks across 65
-  public routes, all 261 legacy records, both MCP eras, and 32 responsive/axe screenshots with no overflow
-  or serious/critical accessibility findings.
-- Remaining scan limitations are external: the Vercel alias causes the scanner to search for “Vercel”
-  developer resources, and CMAC brand discoverability depends on the eventual custom-domain cutover,
-  indexing, consistent NAP listings, and third-party links.
+- Production verification passes: lint, typecheck, production build, warning-free OpenAPI validation,
+  **618 checks across 65 public routes**, all 261 legacy records, both MCP eras, and the official SDK
+  handshake. Final production deployment: `dpl_EgRcxeKUhFJTcHry9buCLbrPDGAU` at
+  `https://cmac-new-concept.vercel.app`.
+- Remaining scan limitations are external or inapplicable. The temporary Vercel alias makes the scanner
+  search for “Vercel” developer resources and Wikidata rather than CMAC; CMAC brand search depends on the
+  eventual custom-domain cutover and indexing. OAuth scopes, idempotency, paid SDK packages, commerce,
+  and MCP Apps are intentionally not fabricated for a public read-only roofing content API.
 
 ### Git note (2026-08-25)
 
@@ -83,8 +93,9 @@ then confirm one real lead delivery. Resend credentials remain intentionally def
 ### Completion record
 
 - **Authenticated preview:** https://cmac-new-concept-k1j5utyfc-cojovis-projects.vercel.app
-- **is-agentic:** **95/100**, “Strong technical baseline” —
-  https://is-agentic.com/scan/cmac-new-concept-eoqjsteiv-cojovis-projects.vercel.app
+- **is-agentic current model:** **75/100, grade B** (forced uncached scan generated
+  `2026-08-26T03:43:15.988Z`). The public report endpoint still exposes a cached 95 from the scanner's
+  earlier scoring model; the owner-reported 39 belongs to the protected immutable preview login shell.
 - **Inventory:** 65 public documents = 2 bespoke marketing pages + 34 services + 12 locations +
   17 trust/company/developer pages. All 65 also have markdown twins.
 - **Verification:** lint, typecheck, production build, content validation, 549-route acceptance checks,
