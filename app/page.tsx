@@ -11,6 +11,8 @@ import {
   Hammer,
   Headphones,
   Home,
+  Mail,
+  MapPin,
   MapPinned,
   Phone,
   Search,
@@ -25,6 +27,7 @@ import { IconBox, RedButton } from '@/components/ui'
 import { credentials, org, press } from '@/content/org'
 import { aggregateRating, reviewsFor } from '@/content/reviews'
 import { docByPath } from '@/content/docs'
+import { marketById } from '@/content/markets'
 import { graphFor } from '@/lib/jsonld'
 
 export const dynamic = 'force-static'
@@ -83,6 +86,24 @@ const processSteps = [
 
 const homeReviews = reviewsFor(3)
 const homeDoc = docByPath('/')!
+const homeLocationLabels: Record<string, string> = {
+  'dallas-fort-worth': 'DFW',
+  houston: 'Houston',
+  austin: 'Austin',
+  'oklahoma-city': 'Oklahoma',
+  arkansas: 'Arkansas',
+  nashville: 'Nashville',
+  georgia: 'Atlanta',
+}
+const homeLocations = [
+  marketById('dallas-fort-worth'),
+  marketById('houston'),
+  marketById('austin'),
+  marketById('oklahoma-city'),
+  marketById('arkansas'),
+  marketById('nashville'),
+  marketById('georgia'),
+]
 
 export default function Page() {
   return (
@@ -271,6 +292,52 @@ export default function Page() {
           <a className="review-source" href={aggregateRating.sourceUrl} rel="noopener noreferrer" target="_blank">
             Read the published Google review source
           </a>
+        </section>
+
+        <section className="panel home-locations-panel" aria-labelledby="home-locations-title">
+          <div className="home-locations-heading">
+            <span className="section-label">DIRECT LOCAL CONTACT</span>
+            <h2 id="home-locations-title">CMAC Locations</h2>
+            <p>Reach the right regional team by email, phone, or published map listing.</p>
+          </div>
+          <ul className="home-location-grid">
+            {homeLocations.map((market, index) => (
+              <li className="home-location-card" key={market.id}>
+                <span className="home-location-index" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <h3>
+                  <Link href={market.path}>{homeLocationLabels[market.id]}</Link>
+                </h3>
+                <div className="home-location-actions">
+                  <a href={`mailto:${market.email}`} aria-label={`Email CMAC ${homeLocationLabels[market.id]} at ${market.email}`}>
+                    <Mail size={19} aria-hidden="true" />
+                  </a>
+                  <a href={`tel:${market.phoneE164}`} aria-label={`Call CMAC ${homeLocationLabels[market.id]} at ${market.phone}`}>
+                    <Phone size={19} aria-hidden="true" />
+                  </a>
+                  {market.mapUrl ? (
+                    <a
+                      href={market.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Open CMAC ${homeLocationLabels[market.id]} in Google Maps`}
+                    >
+                      <MapPin size={19} aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <span className="home-location-action-unavailable" aria-label={`No published map link for CMAC ${homeLocationLabels[market.id]}`} role="img">
+                      <MapPin size={19} aria-hidden="true" />
+                    </span>
+                  )}
+                </div>
+                <a className="home-location-phone" href={`tel:${market.phoneE164}`}>{market.phone}</a>
+              </li>
+            ))}
+          </ul>
+          <Link className="home-locations-all" href="/locations">
+            Explore all location details <ArrowRight size={13} aria-hidden="true" />
+          </Link>
         </section>
 
         <section className="cta-panel" aria-labelledby="cta-title">

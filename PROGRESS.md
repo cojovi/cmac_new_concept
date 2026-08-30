@@ -345,6 +345,57 @@ you want Arial back.**
 
 ---
 
+## 6A. Agent-readiness verification — 2026-08-27
+
+The Is Agentic report for the generated deployment hostname
+`cmac-new-concept-4ni964a2b-cojovis-projects.vercel.app` scored the Vercel Authentication response,
+not the CMAC application. Vercel Standard Protection redirects generated deployment hostnames to
+`vercel.com/sso-api` before the request reaches Next.js. Keep authenticated previews enabled and run
+public crawler audits against the production alias instead:
+
+`https://cmac-new-concept.vercel.app`
+
+A forced public-domain scan on 2026-08-27 scored **82/100 (B)** initially and **84/100 (B)** after the
+scanner's relevance pass correctly marked OAuth and scoped permissions not applicable to this public,
+read-only site. The scan confirmed:
+
+- ✅ unknown routes return a genuine HTTP 404 with agent guidance
+- ✅ homepage exposes 3,336 characters, one H1, landmarks, and a valid heading hierarchy without JS
+- ✅ OpenAPI 3.1 is published and every operation has typed response schemas
+- ✅ unknown API routes return structured JSON problem responses
+- ✅ Markdown negotiation returns `text/markdown` with `Vary: Accept, Accept-Encoding`
+- ✅ sitemap, llms.txt, ARD/AI Catalog, Agent Skills, MCP discovery, and MCP tool annotations pass
+- ⚠️ remaining primary deductions are external search/indexing signals for the temporary Vercel domain
+
+Do not disable Standard Protection merely to make a generated deployment hostname scannable: that
+would expose all preview and generated deployment URLs. Use the public production alias for automated
+audits, and use the eventual canonical CMAC domain for off-site brand/discovery scoring after launch.
+
+---
+
+## 6B. Complete hero system and homepage location directory — 2026-08-30
+
+- Added **29 route-specific hero images** for every location and trust/company document. Together
+  with the existing 34 service visuals and Mini-Homes art, every one of the 65 public content routes
+  now has an art-directed hero.
+- Generated the new family from the homepage hero as its exact art-direction reference: blue-hour
+  graphite architecture, blueprint geometry, selective crimson light, realistic trade detail, and
+  copy-safe negative space. Location scenes include page-specific climate, terrain, or skyline cues.
+- Added a build-time registry assertion and browser test so a missing subpage hero now fails validation.
+- Added an accessible seven-market **CMAC Locations** directory near the bottom of the homepage with
+  direct email, phone, map, and canonical location-page actions. Arkansas and Atlanta retain visibly
+  unavailable map controls because the supplied live-site records publish no destination.
+- Refreshed DFW and Oklahoma contact records from the owner-supplied 2026-08-30 live homepage module;
+  the shared market model now drives the homepage, location pages, JSON-LD, Markdown, and agent APIs.
+- Added image-backed heroes to `/search` and `/thank-you` so utility routes also retain the campaign style.
+- Re-optimized all new masters to 1280×720 AVIF; the complete `public/` directory remains **2.6 MB**.
+
+**Verification:** lint ✅ · typecheck ✅ · production build ✅ · 261 redirects ✅ · **748 site checks
+across 65 routes** ✅ · every sitemap hero decoded in Chromium ✅ · 35 responsive screenshots ✅ ·
+320/390/768/974/1280/2048 widths ✅ · no horizontal overflow ✅ · no serious/critical axe violations ✅
+
+---
+
 ## 7. Owner follow-ups before production
 
 1. **Resend preview configuration** — set `RESEND_API_KEY` and `LEAD_FROM_EMAIL`; optionally set

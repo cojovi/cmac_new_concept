@@ -13,6 +13,7 @@ import {
 } from './services'
 import { trustPages } from './trust'
 import { serviceVisuals, visualForPath } from './service-visuals'
+import { pageVisuals, visualForPage } from './page-visuals'
 import type {
   Block,
   FaqItem,
@@ -268,6 +269,7 @@ function detailDoc(service: ServiceDoc): PageDoc {
 }
 
 function locationsIndexDoc(): PageDoc {
+  const art = visualForPage('/locations')
   return {
     path: '/locations',
     template: 'location-index',
@@ -283,6 +285,11 @@ function locationsIndexDoc(): PageDoc {
         h1: 'Locations',
         sub: 'Five states. Published local contact information.',
         body: 'Choose a state or market to see its canonical address, phone number, email, and regional service information.',
+        image: art?.src,
+        imageAlt: art?.alt,
+        imagePosition: art?.position,
+        eyebrow: 'CMAC SERVICE NETWORK',
+        cta: [{ label: 'Request Inspection', href: '/quote', kind: 'primary' }],
       },
       {
         k: 'links',
@@ -303,12 +310,17 @@ function locationsIndexDoc(): PageDoc {
 function stateDoc(state: StateDoc): PageDoc {
   const stateMarkets = marketsInState(state.id)
   const samePathMarket = stateMarkets.find((market) => market.path === state.path)
+  const art = visualForPage(state.path)
   const sections: Section[] = [
     {
       k: 'hero',
       h1: `CMAC Roofing in ${state.name}`,
       sub: state.intro,
       body: state.climate,
+      image: art?.src,
+      imageAlt: art?.alt,
+      imagePosition: art?.position,
+      eyebrow: `${state.code} / REGIONAL SERVICE`,
       cta: [{ label: 'Request Inspection', href: '/quote', kind: 'primary' }],
     },
   ]
@@ -349,6 +361,7 @@ function marketSource(market: Market): string {
 function marketDoc(market: Market): PageDoc {
   const state = states.find((item) => item.id === market.state)!
   const path = market.path
+  const art = visualForPage(path)
   return {
     path,
     template: 'market',
@@ -368,6 +381,10 @@ function marketDoc(market: Market): PageDoc {
         h1: `CMAC Roofing in ${market.name}`,
         sub: market.intro,
         body: market.climate,
+        image: art?.src,
+        imageAlt: art?.alt,
+        imagePosition: art?.position,
+        eyebrow: `${market.stateCode} / LOCAL FIELD TEAM`,
         cta: [
           { label: 'Request Inspection', href: '/quote', kind: 'primary' },
           { label: `Call ${market.phone}`, href: `tel:${market.phoneE164}` },
@@ -405,11 +422,16 @@ function trustDoc(page: (typeof trustPages)[number]): PageDoc {
   const pageReviews = page.slug === 'reviews'
     ? [...reviews.slice(0, 5), reviews.find((review) => review.rating < 5)!].filter(Boolean).map(shortReview)
     : []
+  const art = visualForPage(page.path)
   const sections: Section[] = [
     {
       k: 'hero',
       h1: page.h1,
       sub: page.sub,
+      image: art?.src,
+      imageAlt: art?.alt,
+      imagePosition: art?.position,
+      eyebrow: 'CMAC / COMPANY RESOURCE',
       cta: page.form
         ? [
             {
@@ -660,6 +682,11 @@ export function validateContent(): void {
   }
   for (const serviceDoc of serviceDocs) {
     if (!serviceVisuals[serviceDoc.path]) errors.push(`${serviceDoc.path}: missing art-directed service visual`)
+  }
+  for (const doc of [...locationDocs, ...companyDocs]) {
+    if (!pageVisuals[doc.path]) errors.push(`${doc.path}: missing art-directed page visual`)
+    const hero = doc.sections.find((section) => section.k === 'hero')
+    if (!hero || hero.k !== 'hero' || !hero.image) errors.push(`${doc.path}: hero does not consume its page visual`)
   }
   if (!marketById('arkansas').path.endsWith('/arkansas')) errors.push('Arkansas canonical path is invalid')
   if (!marketById('georgia').path.endsWith('/georgia/atlanta')) errors.push('Atlanta canonical path is invalid')

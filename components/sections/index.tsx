@@ -354,6 +354,11 @@ function NapSection({ market: m }: { market: Market }) {
           <a href={`mailto:${m.email}`}>
             <Mail size={12} aria-hidden="true" /> {m.email}
           </a>
+          {m.mapUrl ? (
+            <a href={m.mapUrl} target="_blank" rel="noopener noreferrer">
+              <MapPin size={12} aria-hidden="true" /> Open map
+            </a>
+          ) : null}
         </p>
       </div>
       <div className="nap-areas">

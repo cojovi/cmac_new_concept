@@ -40,6 +40,16 @@ for (const path of urls) {
     ?? html.match(/<link[^>]+href="([^"]+)"[^>]+rel="canonical"/i)?.[1]
   check(response.status === 200, `${path} returns 200`, String(response.status))
   check(h1Count === 1, `${path} has exactly one h1`, String(h1Count))
+  if (path === '/') check(html.includes('/hero-house.'), 'homepage renders its art-directed hero')
+  else if (path === '/mini-homes') check(html.includes('/minihomes-hero.'), 'Mini-Homes renders its art-directed hero')
+  else {
+    check(html.includes('page-hero-with-image'), `${path} uses the image-backed subpage hero`)
+    check(
+      html.includes('service-visuals%2F') || html.includes('/service-visuals/')
+        || html.includes('page-visuals%2F') || html.includes('/page-visuals/'),
+      `${path} renders a route-relevant hero asset`,
+    )
+  }
   check(Boolean(canonical), `${path} has canonical metadata`)
   if (canonical) {
     const prior = canonicals.get(canonical)
@@ -67,6 +77,15 @@ for (const path of urls) {
     check(rawText.length > 700, `${path} has substantive raw HTML`, String(rawText.length))
   }
 }
+
+const homepage = await request('/')
+const homepageHtml = await homepage.text()
+check((homepageHtml.match(/class="home-location-card"/g) || []).length === 7, 'homepage renders all seven CMAC location contacts')
+check(
+  ['brianm@cmacroofing.com', 'martinm@cmacroofing.com', 'garretd@cmacroofing.com', 'davidh@cmacroofing.com', 'nickh@cmacroofing.com']
+    .every((email) => homepageHtml.includes(`mailto:${email}`)),
+  'homepage location module exposes every published local email',
+)
 
 for (const path of internalLinks) {
   if (path.startsWith('/api/') || path === '/thank-you') continue

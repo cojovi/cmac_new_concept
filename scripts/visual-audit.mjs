@@ -20,6 +20,9 @@ const templates = [
   '/services/exteriors',
   '/services/roofing/roof-repairs',
   '/locations/texas/dallas-fort-worth',
+  '/locations/texas/houston',
+  '/locations/tennessee/nashville',
+  '/locations/georgia/atlanta',
   '/about',
   '/developers',
   '/quote',
@@ -97,6 +100,25 @@ for (const pathname of serviceRoutes) {
   await page.screenshot({ path: path.join(output, `${name}-1280.png`), fullPage: true })
   await context.close()
 }
+
+const sitemapXml = await (await fetch(`${base}/sitemap.xml`)).text()
+const imageBackedRoutes = [...sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g)]
+  .map((match) => new URL(match[1]).pathname)
+  .filter((pathname) => pathname !== '/' && pathname !== '/mini-homes')
+const heroContext = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+const heroPage = await heroContext.newPage()
+for (const pathname of imageBackedRoutes) {
+  await heroPage.goto(`${base}${pathname}`, { waitUntil: 'load' })
+  const hero = heroPage.locator('.page-hero-media img')
+  if (await hero.count() !== 1) {
+    failures.push(`${pathname} does not render exactly one hero image`)
+    continue
+  }
+  await hero.evaluate((image) => image.decode())
+  const naturalWidth = await hero.evaluate((image) => image.naturalWidth)
+  if (!naturalWidth) failures.push(`${pathname} hero image failed to load`)
+}
+await heroContext.close()
 
 const interactionContext = await browser.newContext({ viewport: { width: 1280, height: 900 } })
 const interactionPage = await interactionContext.newPage()

@@ -53,6 +53,8 @@ export interface Market {
   /** E.164, for tel: links and JSON-LD */
   phoneE164: string
   email: string
+  /** Verified destination for the location card's map action. Omitted when CMAC publishes no map link. */
+  mapUrl?: string
   geo?: { lat: number; lng: number }
   /** Cities and counties named on the page and in `areaServed` */
   areasServed: string[]

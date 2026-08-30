@@ -12,6 +12,7 @@
     "validate:redirects": "node scripts/check-redirects.mjs",
     "optimize:assets": "node scripts/optimize-assets.mjs",
     "generate:service-visuals": "node scripts/generate-service-visuals.mjs",
+    "generate:page-visuals": "node scripts/generate-page-visuals.mjs",
     "optimize:service-visuals": "node scripts/optimize-service-visuals.mjs",
     "verify:site": "node scripts/verify-site.mjs",
     "verify:visual": "node scripts/visual-audit.mjs",

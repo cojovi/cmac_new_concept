@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
@@ -21,11 +22,23 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     <div className="site-shell">
       <SiteHeader />
       <main id="main-content">
-        <section className="page-hero">
-          <div className="page-hero-inner">
-            <p className="eyebrow">CMAC Site Search</p>
+        <section className="panel page-hero page-hero-with-image">
+          <div className="page-hero-media">
+            <Image
+              src="/page-visuals/sitemap-page.avif"
+              alt="A structured CMAC site information network"
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectPosition: '62% center' }}
+            />
+            <div className="page-hero-media-wash" aria-hidden="true" />
+            <span className="page-hero-media-index" aria-hidden="true">CMAC / SEARCH SYSTEM</span>
+          </div>
+          <div className="page-hero-copy">
+            <span className="section-label red">CMAC SITE SEARCH</span>
             <h1>Search CMAC Roofing</h1>
-            <p>Find services, service areas, and company information from the same content index used by our agent interfaces.</p>
+            <p className="hero-sub">Find services, service areas, and company information from the same content index used by our agent interfaces.</p>
             <form
               {...{
                 toolname: 'search_cmac_site',
